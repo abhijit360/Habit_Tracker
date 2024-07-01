@@ -14,6 +14,7 @@ document.getElementById("end-timer").addEventListener('click', () => {
     if( interval){
         clearTimer()
         startTime = 0
+        prev_time = 0
         document.getElementById('time-elapsed').textContent = `0:0:0`
     }
 });
@@ -21,7 +22,7 @@ document.getElementById("end-timer").addEventListener('click', () => {
 document.getElementById("pause-timer").addEventListener('click', () => {
     print("running", paused)
     if (! paused){
-        prev_time = Date.now() - startTime
+        prev_time += Math.floor(Date.now() - startTime);
         clearTimer();
         paused = true;
         document.getElementById("pause-timer").textContent = 'Resume';
