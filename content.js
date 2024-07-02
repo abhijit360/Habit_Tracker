@@ -5,8 +5,9 @@ let prev_time = 0
 
 document.addEventListener('DOMContentLoaded', () => {
     let weekComponent = document.getElementById("week-date")
+    const today = new Date(Date.now())
+    weekComponent.textContent = today.toDateString()
 })
-
 
 document.getElementById("start-timer").addEventListener('click', () =>{
     console.log(interval)
