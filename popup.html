@@ -1,10 +1,25 @@
 <html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="popup.css">
+    <script src="content.js"></script>
+  </head> 
   <body>
+    <div class="shaded-box-container">
+      <span class="Week-date" id="week-date"></span>
+      <span class="sunday shaded-box"></span>
+      <span class="monday shaded-box green4">M</span>
+      <span class="tuesday shaded-box green2"></span>
+      <span class="wednesday shaded-box green1">W</span>
+      <span class="thursday shaded-box green3"></span>
+      <span class="friday shaded-box">F</span>
+      <span class="saturday shaded-box"></span>
+      
+      
+    </div>
     <h1>Time tracker</h1>
     <p>Current time spent on a task: <span id="time-elapsed">00:00:00</span></p>
     <button id="start-timer">Start Task</button>
     <button id="end-timer">End Task</button>
     <span id="pause-visibility"><button id="pause-timer">Pause</button></span>
-    <script src="content.js"></script>
   </body>
 </html>

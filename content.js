@@ -3,6 +3,11 @@ let interval;
 let paused = false;
 let prev_time = 0
 
+document.addEventListener('DOMContentLoaded', () => {
+    let weekComponent = document.getElementById("week-date")
+})
+
+
 document.getElementById("start-timer").addEventListener('click', () =>{
     console.log(interval)
     if (! interval){
