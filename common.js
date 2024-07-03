@@ -1,1 +1,0 @@
-export const INCREMENT_KEY = "__HABIT_TRACKER_TIMER_VAL__"
