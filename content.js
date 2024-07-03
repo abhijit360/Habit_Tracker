@@ -7,6 +7,28 @@ document.addEventListener('DOMContentLoaded', () => {
     let weekComponent = document.getElementById("week-date")
     const today = new Date(Date.now())
     weekComponent.textContent = today.toDateString()
+    
+    const hoverElements = document.getElementsByClassName("hover-effect")
+    for( let i = 0; i < hoverElements.length; i++){
+        hoverElements[i].addEventListener("mouseenter", (event) => {
+            console.log("entering",event.target)
+            const tooltip = document.getElementById("tooltip")
+            const rect = event.target.getBoundingClientRect();
+            tooltip.style.left = `${rect.left + window.scrollX }px`;
+            tooltip.style.top = `${rect.top + window.scrollY - tooltip.offsetHeight - 20}px`;
+            tooltip.style.display = 'inline-block';
+            tooltip.innerText = "5 Tasks completed"
+        })
+    }
+
+    for(let i = 0; i < hoverElements.length; i++){
+        hoverElements[i].addEventListener("mouseleave", (event) => {
+            console.log("leaving", event.target)
+            setTimeout(() => document.getElementById("tooltip").style.display = 'none',200)
+        })
+    }
+    
+
 })
 
 document.getElementById("start-timer").addEventListener('click', () =>{
