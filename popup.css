@@ -1,58 +1,110 @@
 .container{
-    /* background-color: rgb(137, 131, 156);/ */
+    background-color: rgb(128,128,128);
+    display: flex;
+    flex-direction: column;
+    width: 350px;
+    height: 450px;
+    padding: 15px;
 }
-.shaded-box{
+.week-date,.task-selector-label{
+    font-weight:700;
+    font-size: large;
+    margin-bottom: 2px;
+    
+}
+.shaded-tile{
     width: 18px;
     height: 18px;
-    background-color: rgb(33, 73, 117);
+    background-color: rgb(176,184,222);
     color: white;
     text-align: center;
-    font-weight: 600;
-    border-radius: 5px;
-    margin-right: 3px;
+    font-weight: 700;
+    border-radius: 2.5px;
     cursor: pointer;
+    justify-content: center;
+    align-self: center;
 }
 
-.shaded-box-container{
+.shaded-tile-container{
     display: flex;
     flex-direction: row;
+    gap: 15px;
     padding: 10px;
     justify-content: center;
-    height: 20px;
-    width: 200px;
-    background-color: rgb(137, 131, 156);
+    height: 32px;
+    width: 325px;
+    background-color: rgb(44,63,131);
+    border-radius: 5px;
+}
+
+.task-selector{
+    height: 32px;
+    border-radius: 4px;
+    padding: 3px;
+}
+
+.task-display-container{
+    width: 350px;
+    height: 160px;
+    background-color: white;
+    opacity: 50%;
     border-radius: 10px;
+    align-self: center;
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
 }
+
+.task-description{
+    background-color: white;
+    opacity: 100%;
+    border-radius: 3px;
+    width: 300px;
+}
+
+.time{
+    width: 32px;
+    height: 38px;
+    border: solid black 1px;
+    border-radius: 2px;
+    font-size:large;
+    font-weight: 700;
+    padding: 0px 1.5px;
+}
+
+.time-separator{
+    font-size:large;
+    font-weight: 700;
+}
+
 
 .green4{
     background-color: rgb( 81, 255, 0);
     color: black;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .green3{
     background-color: rgb(139, 232, 177);
     color: black;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .green2{
     background-color: rgb(123, 214, 26);
     color: black;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .green1{
     background-color: rgb( 221, 242, 211);
     color: black;
-    font-weight: 600;
+    font-weight: 700;
 }
 
-.week-date{
-    font-weight: 400;
-    font-size:large;
-}
+
 
 .tooltip{
     position: absolute;
