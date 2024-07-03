@@ -5,11 +5,13 @@
     width: 350px;
     height: 450px;
     padding: 15px;
+    align-items: center;
 }
 .week-date,.task-selector-label{
     font-weight:700;
     font-size: large;
     margin-bottom: 2px;
+    align-self:flex-start;
     
 }
 .shaded-tile{
@@ -41,6 +43,8 @@
     height: 32px;
     border-radius: 4px;
     padding: 3px;
+    align-self: flex-start;
+    width: max-content;
 }
 
 .task-display-container{
@@ -49,7 +53,6 @@
     background-color: white;
     opacity: 50%;
     border-radius: 10px;
-    align-self: center;
     margin-top: 25px;
     display: flex;
     flex-direction: column;
@@ -64,12 +67,15 @@
     width: 300px;
 }
 
+.timer-container{
+    margin-top: 15px;
+}
 .time{
-    width: 32px;
-    height: 38px;
+    width: 70px;
+    height: 54px;
     border: solid black 1px;
     border-radius: 2px;
-    font-size:large;
+    font-size:xx-large;
     font-weight: 700;
     padding: 0px 1.5px;
 }
@@ -79,6 +85,17 @@
     font-weight: 700;
 }
 
+.control-panel{
+    display: flex;
+    flex-direction: row;
+    gap: 25px;
+    margin-top: 15px;
+}
+.control-icons{
+    width: 20px;
+    height: 20px;
+    color: black;
+}
 
 .green4{
     background-color: rgb( 81, 255, 0);
