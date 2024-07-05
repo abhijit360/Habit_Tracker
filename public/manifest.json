@@ -1,0 +1,14 @@
+{
+    "name": "Task Tracking App",
+    "version": "1.0.0",
+    "manifest_version": 3,
+    "description": "Time and task tracking app with google calendar integration",
+    "action":{
+        "default_popup" : "index.html",
+        "default_title" :"Open"
+    },
+    "permissions": [
+        "storage",
+        "scripting"
+    ]
+  }
