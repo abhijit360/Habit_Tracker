@@ -1,0 +1,24 @@
+.time-title{
+    padding: 0;
+    margin: 0;
+    font-size:14px;
+    color: black;
+    font-weight: 700;
+}
+
+.time-date{
+    padding: 0;
+    margin: 0;
+    font-size:10px;
+    color:black;
+    font-weight: 500;
+}
+
+.time-container{
+    display: flex;
+    display: inline-block;
+    flex-direction: column;
+    justify-items: start;
+    gap:3px;
+    padding: 2px 5px;
+}

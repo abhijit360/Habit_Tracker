@@ -1,0 +1,17 @@
+.task-display-container{
+    background-color: white;
+    border-radius: 10px;
+    padding: 3px 5px;
+    width:450px;
+    height: 250px;
+    color: black;
+    display: flex;
+    flex-direction: column;
+}
+
+.task-display-header{
+    display: flex;
+    flex-direction: rows;
+    width: 90%;
+    justify-content: space-between;
+}
