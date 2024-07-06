@@ -1,5 +1,5 @@
 import React from "react";
-
+import "./task.css"
 interface TaskProps {
   taskName: String;
   startTime: Date;
@@ -9,9 +9,14 @@ interface TaskProps {
 
 export function Task({ taskName, startTime, endTime, attempted }: TaskProps) {
   function formatTime(date: Date) {
-    const hours = date.getUTCHours();
-    const minutes = date.getUTCMinutes();
-    return `${hours}:${minutes}`;
+    const hours = date.getUTCHours().toString();
+    const h = hours.length == 1 ? "0" + hours : hours
+    const minutes = date.getUTCMinutes().toString();
+    const m = minutes.length == 1 ? "0" + minutes : minutes;
+    const seconds = date.getUTCSeconds().toString();
+    const s = seconds.length == 1 ? "0" + seconds : seconds;
+
+    return `${h}:${m}:${s}`;
   }
   return (
     <>
@@ -23,20 +28,20 @@ export function Task({ taskName, startTime, endTime, attempted }: TaskProps) {
           </p>
         ) : (
           <p className="task-date">
-            `${formatTime(startTime)} - ${formatTime(endTime)}`
+            {formatTime(startTime)} - {formatTime(endTime)}
           </p>
         )}
         <div className="task-utilities">
           {attempted ? (
             <>
-              <img src="edit.svg" alt="continue or edit time entry" style={{ width: "24px", height: "24px", cursor: "pointer" }} />
+              <img src="edit.svg" alt="continue or edit time entry" />
             </>
           ) : (
             <>
-              <img src="play.svg" alt="start time entry" style={{ width: "24px", height: "24px", cursor: "pointer"}} />
+              <img src="play.svg" alt="start time entry"  />
             </>
           )}
-            <img src="./delete.svg" alt="delete time entry" style={{ width: "24px", height: "24px", cursor: "pointer" }} />
+            <img src="./delete.svg" alt="delete time entry" />
         </div>
       </div>
     </>

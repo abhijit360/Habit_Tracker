@@ -1,0 +1,29 @@
+.task-container{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    border-bottom: 1px black solid;
+    padding: 0 20px;
+    align-items: center;
+}
+
+.task-date, .task-name{
+    font-weight: 700;
+    color: black;
+    font-size: 14px;
+}
+
+.task-utilities{
+    display: flex;
+    flex-direction: row;
+}
+
+.task-utilities img{
+    margin: 0;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    gap: 15px;
+}
