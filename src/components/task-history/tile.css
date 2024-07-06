@@ -1,0 +1,32 @@
+.tile{
+    width: 15px;
+    height: 15px;
+    background-color: rgb(176,184,222);
+    border-radius: 2.5px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 8px;
+}
+
+.tile-tooltip{
+    position: absolute;
+    z-index: 1000;
+    background-color: rgb(201, 201, 201);
+    padding:1px;
+}
+
+.green4{
+    background-color: rgb(0,255,41);
+}
+
+.green3{
+    background-color: rgb(123,246,143);
+}
+
+.green2{
+    background-color: rgb(170,235,180);
+}
+
+.green1{
+    background-color: rgb(215,240,219);
+}
