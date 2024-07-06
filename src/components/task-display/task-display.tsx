@@ -19,6 +19,12 @@ export function TaskDisplay() {
             <img src="./add.svg" style={{backgroundColor:"grey", borderRadius:"50%", width:"24px", height:"24px" }} alt="add task"/>
         </div>
         <div className="task-display-body">
+          <Task   taskName={"Task one"} startTime={d1} endTime={d2} attempted={true}/>
+          <Task  taskName={"Task one"} startTime={d3} endTime={d4} attempted={false}/>
+          <Task  taskName={"Task one"} startTime={d1} endTime={d2} attempted={true}/>
+          <Task  taskName={"Task one"} startTime={d3} endTime={d4} attempted={false}/>
+          <Task  taskName={"Task one"} startTime={d1} endTime={d2} attempted={true}/>
+          <Task  taskName={"Task one"} startTime={d3} endTime={d4} attempted={false}/>
           <Task  taskName={"Task one"} startTime={d1} endTime={d2} attempted={true}/>
           <Task  taskName={"Task one"} startTime={d3} endTime={d4} attempted={false}/>
         </div>

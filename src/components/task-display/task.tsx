@@ -10,11 +10,11 @@ interface TaskProps {
 export function Task({ taskName, startTime, endTime, attempted }: TaskProps) {
   function formatTime(date: Date) {
     const hours = date.getUTCHours().toString();
-    const h = hours.length == 1 ? "0" + hours : hours
+    const h = hours.length === 1 ? "0" + hours : hours
     const minutes = date.getUTCMinutes().toString();
-    const m = minutes.length == 1 ? "0" + minutes : minutes;
+    const m = minutes.length === 1 ? "0" + minutes : minutes;
     const seconds = date.getUTCSeconds().toString();
-    const s = seconds.length == 1 ? "0" + seconds : seconds;
+    const s = seconds.length === 1 ? "0" + seconds : seconds;
 
     return `${h}:${m}:${s}`;
   }
