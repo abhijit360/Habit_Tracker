@@ -7,7 +7,7 @@ interface TileProps {
   day: string;
 }
 
-export default function Tile({ completedTasks, totalTasks, day }: TileProps) {
+export function Tile({ completedTasks, totalTasks, day }: TileProps) {
   const [visibility, setVisibility] = useState<boolean>(false);
   const tasksCompletedRatio = completedTasks / totalTasks;
 

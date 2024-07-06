@@ -1,17 +1,17 @@
 import React from "react";
 import "./task-history.css"
-import Tile from "./tile";
-export default function TaskHistory(){
+import {Tile} from "./tile";
+export function TaskHistory(){
     return (
         <>
-            <div>
-                <Tile totalTasks={5} completedTasks={0} day=""/>
-                <Tile totalTasks={5} completedTasks={0} day="M"/>
-                <Tile totalTasks={5} completedTasks={0} day=""/>
-                <Tile totalTasks={5} completedTasks={0} day="W"/>
-                <Tile totalTasks={5} completedTasks={0} day=""/>
-                <Tile totalTasks={5} completedTasks={0} day="F"/>
-                <Tile totalTasks={5} completedTasks={0} day=""/>
+            <div className="tile-container">
+                <Tile totalTasks={10} completedTasks={0} day=""/>
+                <Tile totalTasks={10} completedTasks={3} day="M"/>
+                <Tile totalTasks={10} completedTasks={5} day=""/>
+                <Tile totalTasks={10} completedTasks={6} day="W"/>
+                <Tile totalTasks={10} completedTasks={8} day=""/>
+                <Tile totalTasks={10} completedTasks={9} day="F"/>
+                <Tile totalTasks={10} completedTasks={10} day=""/>
             </div>
         </>
     )

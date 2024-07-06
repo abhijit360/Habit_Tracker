@@ -1,0 +1,12 @@
+.tile-container{
+    width: 305px;
+    height: 55px;
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    padding: auto;
+    background-color: rgb(75,85,167);
+    border-radius: 5px;
+    align-items: center;
+    justify-content: center;
+}
