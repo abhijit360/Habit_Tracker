@@ -1,6 +1,5 @@
 import React from "react";
-import { DateAndTime } from "./date-and-time";
-import { ProgressBar } from "./progress-bar";
+import { HeaderBar } from "../header-bar/header-bar";
 import { Task } from "./task";
 import "./task-display.css"
 export function TaskDisplay() {
@@ -13,11 +12,7 @@ export function TaskDisplay() {
   return (
     <>
       <div className="task-display-container">
-        <div className="task-display-header">
-            <DateAndTime/>
-            <ProgressBar finished={1} total={3}/>
-            <img src="./add.svg" style={{backgroundColor:"grey", borderRadius:"50%", width:"24px", height:"24px" }} alt="add task"/>
-        </div>
+        <HeaderBar />
         <div className="task-display-body">
           <Task   taskName={"Task one"} startTime={d1} endTime={d2} attempted={true}/>
           <Task  taskName={"Task one"} startTime={d3} endTime={d4} attempted={false}/>

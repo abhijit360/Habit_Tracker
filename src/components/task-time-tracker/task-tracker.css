@@ -1,4 +1,4 @@
-.task-tracker-container{
+.time-tracker-container{
     background-color: white;
     border-radius: 10px;
     padding: 3px 5px;
@@ -6,6 +6,18 @@
     height: 250px;
     color: black;
     display: flex;
-    flex-direction: row;
-    padding-top: 0.5rem;
+    flex-direction: column;
+    
+}
+
+.current-task-label{
+    font-size: 25px;
+    font-weight: 800;
+    border-bottom: 3px solid black;
+    /* width: 100px; */
+    /* display: inline-block; */
+    height: 25px;
+    text-align: start;
+    padding-left: 10px;
+    padding-bottom: 3px;
 }
