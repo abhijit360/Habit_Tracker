@@ -1,0 +1,15 @@
+.task-description-container{
+    padding-left:10px;
+}
+.task-description-title{
+    font-size: 12px;
+    font-weight: 700;
+    width: 100%
+}
+
+.task-description-body{
+    font-size: 10px;
+    text-overflow: ellipsis;
+}
+
+

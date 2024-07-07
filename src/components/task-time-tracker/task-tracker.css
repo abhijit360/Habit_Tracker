@@ -1,0 +1,11 @@
+.task-tracker-container{
+    background-color: white;
+    border-radius: 10px;
+    padding: 3px 5px;
+    width:450px;
+    height: 250px;
+    color: black;
+    display: flex;
+    flex-direction: row;
+    padding-top: 0.5rem;
+}
