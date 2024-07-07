@@ -9,4 +9,19 @@
     border-radius: 5px;
     align-items: center;
     justify-content: center;
+    align-self:center;
+}
+
+.task-history-container{
+    display: flex;
+    flex-direction: column;
+    width:450px;
+}
+
+.task-history-label{
+    font-size: 18px;
+    font-weight: 600;
+    padding-left: 10px;
+    align-self: start;
+    color: white;
 }

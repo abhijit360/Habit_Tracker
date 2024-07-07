@@ -7,7 +7,6 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <p style={{ alignSelf: "start" }}>Weekly Tracker</p>
         <TaskHistory />
         <TaskDisplay />
         <TaskTracker />

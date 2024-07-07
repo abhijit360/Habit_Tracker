@@ -10,9 +10,11 @@
     font-size: 20px;
     font-weight: 700;
     text-align: start;
+    padding-bottom: 0;
 }
 
 .task-description-body{
+    padding-top: 0;
     font-size: 18px;
     text-overflow: ellipsis;
     height: 100px;
