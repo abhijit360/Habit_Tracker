@@ -1,14 +1,8 @@
 import "./task-editor.css";
 import { useForm, Resolver, useFieldArray } from "react-hook-form";
+import type {TaskType} from "../../../types"
 
-type FormValues = {
-  title: string;
-  body: string;
-  times: { startTime: Date; endTime: Date }[];
-  state: "completed" | "in-progress" | "started";
-};
-
-const resolver: Resolver<FormValues> = async (values) => {
+const resolver: Resolver<TaskType> = async (values) => {
   return {
     values: values.title ? values : {},
     errors: !values.title
@@ -22,14 +16,14 @@ const resolver: Resolver<FormValues> = async (values) => {
   };
 };
 
-export function TaskEditor({ TaskData }: { TaskData: FormValues }) {
+export function TaskEditor({ TaskData }: { TaskData: TaskType }) {
   const {
     register,
     handleSubmit,
     formState: { errors },
     control,
-  } = useForm<FormValues>({ resolver });
-  const { fields, append, remove, move } = useFieldArray({
+  } = useForm<TaskType>({ resolver });
+  const { fields, append, remove } = useFieldArray({
     control,
     name: "times",
   });
@@ -78,7 +72,7 @@ export function TaskEditor({ TaskData }: { TaskData: FormValues }) {
             onClick={() =>
               append({
                 startTime: new Date(Date.now()),
-                endTime: new Date(Date.now() + +60 * 60 * 1000) //1 hour after startTime
+                endTime: new Date(Date.now() + 60 * 60 * 1000) //1 hour after startTime
               })
             }
           >

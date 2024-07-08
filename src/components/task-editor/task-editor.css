@@ -9,3 +9,9 @@
   flex-direction: column;
   padding-top: 0.5rem;
 }
+
+.time-slot-delete{
+  width: 24px;
+  height: 24px;
+  
+}
