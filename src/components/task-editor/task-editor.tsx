@@ -36,14 +36,14 @@ export function TaskEditor({ TaskData }: { TaskData: TaskType }) {
           <input
             {...(register("title"), { required: true })}
             placeholder="Task Title"
-            className="Task-Title"
+            className="task-title"
           />
           {errors?.title && <p>{errors.title.message}</p>}
 
-          <input
+          <textarea
             {...(register("body"), { required: true })}
             placeholder="Task Body"
-            className="Task-body"
+            className="task-body"
           />
           {fields.map((field, index) => (
             <>
@@ -52,12 +52,14 @@ export function TaskEditor({ TaskData }: { TaskData: TaskType }) {
                   key={field.id}
                   className="time-slot-selector"
                   {...register(`times.${index}.startTime`)}
+                  type="datetime-local"
                 />
-                <span className="time-slot-selector">-</span>
+                <span className="time-slot-separator">-</span>
                 <input
                   key={field.id}
                   className="time-slot-selector"
                   {...register(`times.${index}.startTime`)}
+                  type="datetime-local"
                 />
                 <img
                   src="./delete.svg"
