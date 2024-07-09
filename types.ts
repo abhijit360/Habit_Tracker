@@ -1,4 +1,5 @@
 export type TaskType = {
+    id: string;
     title: string;
     body: string;
     times: { startTime: Date; endTime: Date }[];
