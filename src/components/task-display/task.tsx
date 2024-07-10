@@ -1,47 +1,63 @@
 import React from "react";
-import "./task.css"
-interface TaskProps {
-  taskName: String;
-  startTime: Date;
-  endTime: Date;
-  attempted: Boolean;
-}
+import "./task.css";
+import { TaskType } from "../../../types";
+import { useTasksStore } from "../../store";
 
-export function Task({ taskName, startTime, endTime, attempted }: TaskProps) {
+export function Task({ id, title, times, state }: TaskType) {
   function formatTime(date: Date) {
-    const hours = date.getUTCHours().toString();
-    const h = hours.length === 1 ? "0" + hours : hours
-    const minutes = date.getUTCMinutes().toString();
-    const m = minutes.length === 1 ? "0" + minutes : minutes;
-    const seconds = date.getUTCSeconds().toString();
-    const s = seconds.length === 1 ? "0" + seconds : seconds;
-
-    return `${h}:${m}:${s}`;
+    const hours = date.getUTCHours();
+    const minutes = date.getUTCMinutes();
+    const seconds = date.getUTCSeconds();
+    return { h: hours, m: minutes, s: seconds };
   }
+
+  const {remove} = useTasksStore()
+
+  function timeToString( data: {h: number, m:number, s:number}){
+    const hours = data.h.toString().length == 1 ? `0${data.h}` : data.h.toString()
+    const minutes = data.m.toString().length == 1 ? `0${data.m}` : data.m.toString()
+    const seconds = data.s.toString().length == 1 ? `0${data.s}` : data.s.toString()
+    return `${hours}:${minutes}:${seconds}`
+  }
+  const time_passed = times
+    .map((time) =>
+      formatTime(new Date(time.endTime.getTime() - time.startTime.getTime()))
+    )
+    .reduce(
+      (acc, time) => {
+        acc.h += time.h;
+        acc.m += time.m;
+        acc.s += time.s;
+        return acc;
+      },
+      { h: 0, m: 0, s: 0 }
+    );
+
   return (
     <>
       <div className="task-container">
-        <p className="task-name">{taskName}</p>
-        {attempted ? (
+        <p className="task-name">{title}</p>
+        {state === "new" ? (
           <p className="task-date">
-            {formatTime(new Date(endTime.getTime() - startTime.getTime()))}
+            {/* {formatTime(new Date(endTime.getTime() - startTime.getTime()))} */}
+            SCHEDULED-TIME-HERE
           </p>
         ) : (
           <p className="task-date">
-            {formatTime(startTime)} - {formatTime(endTime)}
+            {timeToString(time_passed)}
           </p>
         )}
         <div className="task-utilities">
-          {attempted ? (
+          {state !== "new" ? (
             <>
               <img src="edit.svg" alt="continue or edit time entry" />
             </>
           ) : (
             <>
-              <img src="play.svg" alt="start time entry"  />
+              <img src="play.svg" alt="start time entry" />
             </>
           )}
-            <img src="./delete.svg" alt="delete time entry" />
+          <img src="./delete.svg" onClick={() => remove(id)} alt="delete time entry" />
         </div>
       </div>
     </>
