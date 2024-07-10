@@ -4,11 +4,10 @@ import { TaskHistory } from "./components/task-history/task-history";
 import { TaskTracker } from "./components/task-time-tracker/task-tracker";
 import { TaskEditor } from "./components/task-editor/task-editor";
 import type { TaskType } from "../types";
-import { randomUUID } from "crypto";
 
 function App() {
   const dummyTask : TaskType = {
-    id: randomUUID(),
+    id: window.crypto.randomUUID(),
     title: "Task One", 
     body:"Task one test body", 
     state:"completed", 
