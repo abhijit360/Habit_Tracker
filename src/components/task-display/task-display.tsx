@@ -5,11 +5,7 @@ import "./task-display.css";
 import { useTasksStore } from "../../store";
 export function TaskDisplay() {
   const { tasks } = useTasksStore();
-  const d1 = new Date(2024, 0, 1, 6, 45);
-  const d2 = new Date(2024, 0, 1, 7, 45);
-
-  const d3 = new Date(2024, 0, 1, 14, 45);
-  const d4 = new Date(2024, 0, 1, 16, 45);
+ 
   return (
     <>
       <div className="task-display-container">
@@ -21,9 +17,8 @@ export function TaskDisplay() {
               key={task.id}
               times={task.times}
               state={task.state}
-              title={task.title
-              
-              }
+              title={task.title}
+              body={task.body}
             />
           ))}
         </div>

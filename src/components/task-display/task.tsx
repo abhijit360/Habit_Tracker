@@ -3,7 +3,7 @@ import "./task.css";
 import { TaskType } from "../../../types";
 import { useTasksStore } from "../../store";
 
-export function Task({ id, title, times, state }: TaskType) {
+export function Task({ id, title, body, times, state }: TaskType) {
   function formatTime(date: Date) {
     const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes();
