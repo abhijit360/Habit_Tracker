@@ -2,7 +2,7 @@ import React from "react";
 import { HeaderBar } from "../header-bar/header-bar";
 import { Task } from "./task";
 import "./task-display.css";
-import { useTasksStore } from "../../store";
+import { useTasksStore } from "../../../store";
 export function TaskDisplay() {
   const { tasks } = useTasksStore();
  
