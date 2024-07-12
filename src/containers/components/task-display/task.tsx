@@ -1,7 +1,7 @@
 import React from "react";
 import "./task.css";
-import { TaskType } from "../../../types";
-import { useTasksStore } from "../../store";
+import { TaskType } from "../../../../types";
+import { useTasksStore } from "../../../../store";
 
 export function Task({ id, title, body, times, state }: TaskType) {
   function formatTime(date: Date) {

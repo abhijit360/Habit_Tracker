@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { TaskType } from "./types";
+import { create } from 'zustand';
+import { TaskType } from './types';
 
 interface TasksState {
   tasks: TaskType[];
@@ -7,7 +7,7 @@ interface TasksState {
   remove: (id: string) => void;
   toggleCompletedState: (
     id: string,
-    state: "completed" | "in-progress" | "new"
+    state: 'completed' | 'in-progress' | 'new'
   ) => void;
 }
 

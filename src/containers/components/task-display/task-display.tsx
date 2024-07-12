@@ -5,7 +5,6 @@ import "./task-display.css";
 import { useTasksStore } from "../../../../store";
 export function TaskDisplay() {
   const { tasks } = useTasksStore();
- 
   return (
     <>
       <div className="task-display-container">
