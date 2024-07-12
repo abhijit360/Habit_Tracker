@@ -1,5 +1,7 @@
 import React from "react";
 import "./timer.css";
+import pauseIcon from "../../../assets/img/pause.svg"
+import playIcon from "../../../assets/img/play.svg"
 
 interface TimerProps {
   hours: number;
@@ -36,7 +38,7 @@ export function Timer({ hours, minutes, seconds, started }: TimerProps) {
             <>
               <img
                 className="timer-utilities"
-                src="./../../assets/img/pause.svg"
+                src={pauseIcon}
                 alt="stop timer"
               />
             </>
@@ -44,7 +46,7 @@ export function Timer({ hours, minutes, seconds, started }: TimerProps) {
             <>
               <img
                 className="timer-utilities"
-                src="./../../assets/img/play.svg"
+                src={playIcon}
                 alt="start timer"
               />
             </>

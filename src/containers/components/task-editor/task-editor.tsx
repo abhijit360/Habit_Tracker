@@ -2,6 +2,7 @@ import React from "react";
 import "./task-editor.css";
 import { useForm, Resolver, useFieldArray } from "react-hook-form";
 import type { TaskType } from "../../../../types";
+import deleteIcon from "../../../assets/img/delete.svg"
 
 const resolver: Resolver<TaskType> = async (values) => {
   const errors: any = {};
@@ -126,7 +127,7 @@ export function TaskEditor({ TaskData }: { TaskData: TaskType }) {
                   </span>
                 )}
                 <img
-                  src="./../../assets/img/delete.svg"
+                  src={deleteIcon}
                   alt="delete time slot"
                   className="time-slot-delete"
                   onClick={() => remove(index)}

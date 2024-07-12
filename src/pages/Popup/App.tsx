@@ -23,10 +23,10 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        {/* <TaskHistory /> */}
+        <TaskHistory />
         <TaskDisplay />
-        {/* <TaskTracker />
-        <TaskEditor TaskData={dummyTask} /> */}
+        <TaskTracker />
+        <TaskEditor TaskData={dummyTask} />
       </header>
     </div>
   );

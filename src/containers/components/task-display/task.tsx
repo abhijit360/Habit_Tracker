@@ -2,7 +2,9 @@ import React from "react";
 import "./task.css";
 import { TaskType } from "../../../../types";
 import { useTasksStore } from "../../../../store";
-import icon from  "."
+import editIcon from "../../../assets/img/edit.svg";
+import deleteIcon from "../../../assets/img/delete.svg"
+import playIcon from "../../../assets/img/play.svg"
 
 export function Task({ id, title, body, times, state }: TaskType) {
   function formatTime(date: Date) {
@@ -51,14 +53,14 @@ export function Task({ id, title, body, times, state }: TaskType) {
         <div className="task-utilities">
           {state !== "new" ? (
             <>
-              <img src="./../../assets/img/edit.svg" alt="continue or edit time entry" />
+              <img src={editIcon} alt="continue or edit time entry" />
             </>
           ) : (
             <>
-              <img src="./../../assets/img/play.svg" alt="start time entry" />
+              <img src={playIcon} alt="start time entry" />
             </>
           )}
-          <img src="./../../assets/img/delete.svg" onClick={() => remove(id)} alt="delete time entry" />
+          <img src={deleteIcon} onClick={() => remove(id)} alt="delete time entry" />
         </div>
       </div>
     </>
