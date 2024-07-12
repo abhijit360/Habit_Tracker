@@ -126,7 +126,7 @@ export function TaskEditor({ TaskData }: { TaskData: TaskType }) {
                   </span>
                 )}
                 <img
-                  src="./delete.svg"
+                  src="./../../assets/img/delete.svg"
                   alt="delete time slot"
                   className="time-slot-delete"
                   onClick={() => remove(index)}

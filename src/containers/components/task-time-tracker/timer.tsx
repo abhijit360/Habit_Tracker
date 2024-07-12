@@ -36,7 +36,7 @@ export function Timer({ hours, minutes, seconds, started }: TimerProps) {
             <>
               <img
                 className="timer-utilities"
-                src="./pause.svg"
+                src="./../../assets/img/pause.svg"
                 alt="stop timer"
               />
             </>
@@ -44,7 +44,7 @@ export function Timer({ hours, minutes, seconds, started }: TimerProps) {
             <>
               <img
                 className="timer-utilities"
-                src="./play.svg"
+                src="./../../assets/img/play.svg"
                 alt="start timer"
               />
             </>

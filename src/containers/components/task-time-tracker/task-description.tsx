@@ -1,5 +1,5 @@
-import React from "react";
-import "./task-description.css"
+import React from 'react';
+import './task-description.css';
 interface TaskDescriptionProps {
   title: string;
   body: string;

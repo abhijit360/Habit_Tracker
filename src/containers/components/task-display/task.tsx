@@ -2,6 +2,7 @@ import React from "react";
 import "./task.css";
 import { TaskType } from "../../../../types";
 import { useTasksStore } from "../../../../store";
+import icon from  "."
 
 export function Task({ id, title, body, times, state }: TaskType) {
   function formatTime(date: Date) {
@@ -14,9 +15,9 @@ export function Task({ id, title, body, times, state }: TaskType) {
   const {remove} = useTasksStore()
 
   function timeToString( data: {h: number, m:number, s:number}){
-    const hours = data.h.toString().length == 1 ? `0${data.h}` : data.h.toString()
-    const minutes = data.m.toString().length == 1 ? `0${data.m}` : data.m.toString()
-    const seconds = data.s.toString().length == 1 ? `0${data.s}` : data.s.toString()
+    const hours = data.h.toString().length === 1 ? `0${data.h}` : data.h.toString()
+    const minutes = data.m.toString().length === 1 ? `0${data.m}` : data.m.toString()
+    const seconds = data.s.toString().length === 1 ? `0${data.s}` : data.s.toString()
     return `${hours}:${minutes}:${seconds}`
   }
   const time_passed = times
@@ -50,14 +51,14 @@ export function Task({ id, title, body, times, state }: TaskType) {
         <div className="task-utilities">
           {state !== "new" ? (
             <>
-              <img src="edit.svg" alt="continue or edit time entry" />
+              <img src="./../../assets/img/edit.svg" alt="continue or edit time entry" />
             </>
           ) : (
             <>
-              <img src="play.svg" alt="start time entry" />
+              <img src="./../../assets/img/play.svg" alt="start time entry" />
             </>
           )}
-          <img src="./delete.svg" onClick={() => remove(id)} alt="delete time entry" />
+          <img src="./../../assets/img/delete.svg" onClick={() => remove(id)} alt="delete time entry" />
         </div>
       </div>
     </>
