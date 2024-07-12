@@ -1,6 +1,7 @@
+import React from "react";
 import "./task-editor.css";
 import { useForm, Resolver, useFieldArray } from "react-hook-form";
-import type { TaskType } from "../../../types";
+import type { TaskType } from "../../../../types";
 
 const resolver: Resolver<TaskType> = async (values) => {
   const errors: any = {};

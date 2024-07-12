@@ -1,9 +1,10 @@
 import "./App.css";
-import { TaskDisplay } from "./src/components/task-display/task-display";
-import { TaskHistory } from "./src/components/task-history/task-history";
-import { TaskTracker } from "./src/components/task-time-tracker/task-tracker";
-import { TaskEditor } from "./src/components/task-editor/task-editor";
-import type { TaskType } from "./types";
+import React from "react";
+import { TaskDisplay } from "../../containers/components/task-display/task-display"
+import { TaskHistory } from "../../containers/components/task-history/task-history";
+import { TaskTracker } from "../../containers/components/task-time-tracker/task-tracker";
+import { TaskEditor } from "../../containers/components/task-editor/task-editor";
+import type { TaskType } from "../../../types";
 
 function App() {
   const dummyTask: TaskType = {
@@ -22,6 +23,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
+        <p>Testing?</p>
         {/* <TaskHistory />
         <TaskDisplay />
         <TaskTracker /> */}
