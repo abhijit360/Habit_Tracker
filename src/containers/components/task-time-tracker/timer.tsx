@@ -13,6 +13,7 @@ interface TimerProps {
 export function Timer({ hours, minutes, seconds, started }: TimerProps) {
   const [toggleIcon, setToggleIcon] = useState<boolean>(started);
   const [currentTime, setCurrentTime] = useState<{h:number,m:number,s:number}>({h:0,m:0,s:0})
+  const [firstCounter, setFirstCounter] = useState<number>(0);
   useEffect(() => {
     chrome.runtime.onMessage.addListener(function (
       request,
@@ -20,12 +21,11 @@ export function Timer({ hours, minutes, seconds, started }: TimerProps) {
       sendResponse
     ) {
       if (request) {
-        setCurrentTime(request.time)
+        setCurrentTime(request)
       }
     });
   }, []);
 
-  let first_counter = 0;
   const h =
     hours.toString().length === 1 ? `0${hours.toString()}` : hours.toString();
   const m =
@@ -38,10 +38,11 @@ export function Timer({ hours, minutes, seconds, started }: TimerProps) {
       : seconds.toString();
 
   async function playHandler() {
-    console.log('test');
+    console.log("first counter:",firstCounter);
     setToggleIcon((prev) => !prev);
-    if (first_counter === 0) {
-      first_counter += 1;
+    if (firstCounter === 0){
+      setFirstCounter(1);
+      console.log("adding one to first_counter", firstCounter)
       const response = await chrome.runtime.sendMessage({
         type: 'start-timer',
       });
@@ -65,11 +66,11 @@ export function Timer({ hours, minutes, seconds, started }: TimerProps) {
     <>
       <div className="timer-container">
         <div className="timer-clock-container">
-          <p className="timer-time">{currentTime.h}</p>
+          <p className="timer-time">{currentTime.h.toString().length > 1 ? currentTime.h.toString() : "0".concat(currentTime.h.toString())}</p>
           <p className="timer-separator">:</p>
-          <p className="timer-time">{currentTime.m}</p>
+          <p className="timer-time">{currentTime.m.toString().length > 1 ? currentTime.m.toString() : "0".concat(currentTime.m.toString())}</p>
           <p className="timer-separator">:</p>
-          <p className="timer-time">{currentTime.s}</p>
+          <p className="timer-time">{currentTime.s.toString().length > 1 ? currentTime.s.toString() : "0".concat(currentTime.s.toString())}</p>
         </div>
         <div className="timer-utilities-container">
           {toggleIcon ? (
