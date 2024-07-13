@@ -44,5 +44,8 @@
       "*://*.chromium.org/*"
     ],
     "accepts_tls_channel_id": false
-  }
+  },
+  "permissions": [
+    "storage"
+  ]
 }
