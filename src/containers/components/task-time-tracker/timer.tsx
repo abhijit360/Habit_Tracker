@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './timer.css';
 import pauseIcon from '../../../assets/img/pause.svg';
 import playIcon from '../../../assets/img/play.svg';
@@ -11,8 +11,20 @@ interface TimerProps {
 }
 
 export function Timer({ hours, minutes, seconds, started }: TimerProps) {
-  // function
   const [toggleIcon, setToggleIcon] = useState<boolean>(started);
+  const [currentTime, setCurrentTime] = useState<{h:number,m:number,s:number}>({h:0,m:0,s:0})
+  useEffect(() => {
+    chrome.runtime.onMessage.addListener(function (
+      request,
+      sender,
+      sendResponse
+    ) {
+      if (request) {
+        setCurrentTime(request.time)
+      }
+    });
+  }, []);
+
   let first_counter = 0;
   const h =
     hours.toString().length === 1 ? `0${hours.toString()}` : hours.toString();
@@ -25,38 +37,39 @@ export function Timer({ hours, minutes, seconds, started }: TimerProps) {
       ? `0${seconds.toString()}`
       : seconds.toString();
 
-  function playHandler() {
+  async function playHandler() {
     console.log('test');
     setToggleIcon((prev) => !prev);
     if (first_counter === 0) {
       first_counter += 1;
-      chrome.runtime.sendMessage({ type: 'start-timer' }, (response) => {
-        console.log('Response:', response);
+      const response = await chrome.runtime.sendMessage({
+        type: 'start-timer',
       });
+      console.log('first time starting response', response);
     } else {
-      chrome.runtime.sendMessage({ type: 'resume-timer' }, (response) => {
-        console.log('Response:', response);
+      const response = await chrome.runtime.sendMessage({
+        type: 'resume-timer',
       });
+      console.log('resume response', response);
     }
   }
 
-  function pauseHandler() {
+  async function pauseHandler() {
     console.log('test2');
     setToggleIcon((prev) => !prev);
-    chrome.runtime.sendMessage({ type: 'pause-timer' }, (response) => {
-      console.log('Response:', response);
-    });
+    const response = await chrome.runtime.sendMessage({ type: 'pause-timer' });
+    console.log('pause response', response);
   }
 
   return (
     <>
       <div className="timer-container">
         <div className="timer-clock-container">
-          <p className="timer-time">{h}</p>
+          <p className="timer-time">{currentTime.h}</p>
           <p className="timer-separator">:</p>
-          <p className="timer-time">{m}</p>
+          <p className="timer-time">{currentTime.m}</p>
           <p className="timer-separator">:</p>
-          <p className="timer-time">{s}</p>
+          <p className="timer-time">{currentTime.s}</p>
         </div>
         <div className="timer-utilities-container">
           {toggleIcon ? (

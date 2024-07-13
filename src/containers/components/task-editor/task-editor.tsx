@@ -6,7 +6,6 @@ import deleteIcon from "../../../assets/img/delete.svg"
 
 const resolver: Resolver<TaskType> = async (values) => {
   const errors: any = {};
-
   if (!values.title) {
     errors.title = {
       type: "required",
