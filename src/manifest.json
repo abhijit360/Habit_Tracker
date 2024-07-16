@@ -36,21 +36,13 @@
     }
   ],
   "externally_connectable": {
-    "ids": [
-      "pmpmgjbieifdnmbpklelnbokfbomhpei"
-    ],
-    "matches": [
-      "https://*.google.com/*",
-      "*://*.chromium.org/*"
-    ],
+    "ids": ["pmpmgjbieifdnmbpklelnbokfbomhpei"],
+    "matches": ["https://*.google.com/*", "*://*.chromium.org/*"],
     "accepts_tls_channel_id": false
   },
-  "permissions": [
-    "storage",
-    "identity"
-  ],
+  "permissions": ["storage", "identity"],
   "oauth2": {
-    "client_id" :"1089239919616-c7gfkrfd0gh9qltss2o95sugdkjfa8ik.apps.googleusercontent.com" ,
-    "scopes":["profile", "email", "authorization"]
+    "client_id": "1089239919616-c7gfkrfd0gh9qltss2o95sugdkjfa8ik.apps.googleusercontent.com",
+    "scopes": ["profile", "email", "https://www.googleapis.com/auth/calendar"]
   }
 }
