@@ -1,59 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import type { GoogleUserObj } from '../../../../types';
+import type { GoogleUserObj, GoogleCalendarListing } from '../../../../types';
 
 // // @ts-ignore
 // import secrets from 'secrets';
 export function LogIn() {
   const [tokenAvailability, setTokenAvailability] = useState<boolean>(false);
+  const [calendarListings, setCalendarListings] = useState<
+    GoogleCalendarListing[]
+  >([] as GoogleCalendarListing[]);
   const [userProfile, setUserProfile] = useState<GoogleUserObj>(
     {} as GoogleUserObj
   );
-
-  // useEffect(() => {
-  //   function initClient() {
-  //     window.gapi.client
-  //       .init({
-  //         apiKey: 'YOUR_API_KEY',
-  //         clientId: 'YOUR_CLIENT_ID',
-  //         discoveryDocs: [
-  //           'https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest',
-  //         ],
-  //         scope: 'https://www.googleapis.com/auth/calendar.readonly',
-  //       })
-  //       .then(
-  //         function () {
-  //           // Handle successful initialization
-  //           gapi.auth2
-  //             .getAuthInstance()
-  //             .signIn()
-  //             .then(function () {
-  //               listCalendars();
-  //             });
-  //         },
-  //         function (error) {
-  //           // Handle initialization error
-  //           console.error(error);
-  //         }
-  //       );
-  //   }
-
-  //   function listCalendars() {
-  //     window.gapi.client.calendar.calendarList.list().then(function (response) {
-  //       var calendars = response.result.items;
-  //       if (calendars.length > 0) {
-  //         for (var i = 0; i < calendars.length; i++) {
-  //           var calendar = calendars[i];
-  //           console.log(calendar.summary);
-  //         }
-  //       } else {
-  //         console.log('No calendars found.');
-  //       }
-  //     });
-  //   }
-
-  //   window.gapi.load('client:auth2', initClient);
-  // });
-
   async function checkExistingToken() {
     const response = await chrome.storage.session.get(
       'lockIn-curr-google-token'
@@ -67,6 +24,7 @@ export function LogIn() {
         )
       ).json();
       setUserProfile(profile_data);
+      getCalendars();
     }
   }
   useEffect(() => {
@@ -76,7 +34,7 @@ export function LogIn() {
   async function loginHandler(e: React.MouseEvent) {
     if (chrome.identity) {
       chrome.identity.getAuthToken(
-        { interactive: true,},
+        { interactive: true },
         async function (token) {
           if (chrome.runtime.lastError) {
             console.error(chrome.runtime.lastError);
@@ -91,6 +49,24 @@ export function LogIn() {
     } else {
       console.error('chrome.identity is not available.');
     }
+  }
+
+  async function getCalendars() {
+    const tokenObj = await chrome.storage.session.get(
+      'lockIn-curr-google-token'
+    );
+    const response = await fetch(
+      'https://www.googleapis.com/calendar/v3/users/me/calendarList',
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${tokenObj['lockIn-curr-google-token']}`,
+        },
+      }
+    );
+    const data: any = await response.json();
+    const calendars: GoogleCalendarListing[] = data['items'];
+    setCalendarListings(calendars);
   }
 
   function logoutHandler() {
@@ -115,6 +91,15 @@ export function LogIn() {
             <button>Import</button>
             <button>Skip</button>
             <button onClick={logoutHandler}>LogOut</button>
+            <p>Select which calendar's to import</p>
+            <form>
+              <select multiple={true}>
+                {calendarListings.map((listing) => (
+                  <option value={listing.id}>{listing.summary}</option>
+                ))}
+              </select>
+              <button type='submit'>submit</button>
+            </form>
           </>
         )}
       </div>

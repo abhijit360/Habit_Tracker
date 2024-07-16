@@ -15,3 +15,19 @@ export type GoogleUserObj = {
   email: string;
   email_verified: boolean
 }
+
+export type GoogleCalendarListing =  {
+  "kind": string,
+  "etag": number,
+  "id": string,
+  "summary": string,
+  "description": string ,
+  "timeZone": string,
+  "summaryOverride": string,
+  "colorId": number,
+  "backgroundColor": string,
+  "foregroundColor": string,
+  "accessRole": string,
+  "defaultReminders": [],
+  "conferenceProperties": any
+}
