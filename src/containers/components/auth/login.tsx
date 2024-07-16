@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { GoogleUserObj, GoogleCalendarListing } from '../../../../types';
-
+import {cal} from "gapi";
 // // @ts-ignore
 // import secrets from 'secrets';
 export function LogIn() {
@@ -74,6 +74,11 @@ export function LogIn() {
     setUserProfile({} as GoogleUserObj);
     setTokenAvailability(false);
   }
+
+  async function handleSelectionClick(e: React.MouseEvent){
+    console.log(e.target.value)
+  }
+
   return (
     <>
       <div className="Login-form-container">
@@ -95,11 +100,12 @@ export function LogIn() {
             <form>
               <select multiple={true}>
                 {calendarListings.map((listing) => (
-                  <option value={listing.id}>{listing.summary}</option>
+                  <option value={listing.id} onClick={handleSelectionClick}>{listing.summary}</option>
                 ))}
               </select>
               <button type='submit'>submit</button>
             </form>
+            
           </>
         )}
       </div>
