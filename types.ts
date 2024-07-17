@@ -51,7 +51,7 @@ export type GoogleCalendarEventListing = {
   "items": googleCalendarEvent[]
 }
 
-export type googleCalendarEvent = {
+export type GoogleCalendarEvent = {
   "kind": string,
   "etag": string,
   "id": string,

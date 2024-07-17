@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import type { GoogleUserObj, GoogleCalendarListing } from '../../../../types';
-import {cal} from "gapi";
+import type { GoogleUserObj, GoogleCalendarListing, GoogleCalendarEventListing, GoogleCalendarEvent } from '../../../../types';
+import { cal } from 'gapi';
 // // @ts-ignore
 // import secrets from 'secrets';
 export function LogIn() {
   const [tokenAvailability, setTokenAvailability] = useState<boolean>(false);
-  const [calendarListings, setCalendarListings] = useState<
-    GoogleCalendarListing[]
-  >([] as GoogleCalendarListing[]);
+  const [calendarListings, setCalendarListings] = useState<GoogleCalendarListing[]>([] as GoogleCalendarListing[]);
   const [userProfile, setUserProfile] = useState<GoogleUserObj>(
     {} as GoogleUserObj
   );
@@ -75,10 +73,37 @@ export function LogIn() {
     setTokenAvailability(false);
   }
 
-  async function handleSelectionClick(e: React.MouseEvent){
-    console.log(e.target.value)
-  }
+  async function handleSelectionClick(e: React.MouseEvent) {
+    //@ts-ignore
+    const calendarId = e.target.value
+    
+    const tokenObj = await chrome.storage.session.get(
+      'lockIn-curr-google-token'
+    );
+    // Get the current date
+    const now = new Date();
 
+    // Set timeMin to midnight today
+    const timeMin = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    // Set timeMax to midnight tomorrow
+    const timeMax = new Date(now.getFullYear(), now.getMonth(), now.getDate()+ 1);
+    const response = await fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?timeMax=${timeMax.toISOString()}&timeMin=${timeMin.toISOString()}&eventTypes=default`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${tokenObj['lockIn-curr-google-token']}`,
+        },
+      }
+    );
+    
+    const data : GoogleCalendarEventListing = await response.json()
+    console.log(data.items)
+
+
+  }
+  console.log(calendarListings)
   return (
     <>
       <div className="Login-form-container">
@@ -100,12 +125,13 @@ export function LogIn() {
             <form>
               <select multiple={true}>
                 {calendarListings.map((listing) => (
-                  <option value={listing.id} onClick={handleSelectionClick}>{listing.summary}</option>
+                  <option value={listing.id} onClick={handleSelectionClick}>
+                    {listing.summary}
+                  </option>
                 ))}
               </select>
-              <button type='submit'>submit</button>
+              <button type="submit">submit</button>
             </form>
-            
           </>
         )}
       </div>
