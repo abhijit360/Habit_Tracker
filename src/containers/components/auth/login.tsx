@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import type { GoogleUserObj, GoogleCalendarListing, GoogleCalendarEventListing, GoogleCalendarEvent } from '../../../../types';
-import { cal } from 'gapi';
+import type {
+  GoogleUserObj,
+  GoogleCalendarListing,
+  GoogleCalendarEventListing,
+  GoogleCalendarEvent,
+  TaskType,
+} from '../../../../types';
+import { useTasksStore } from '../../../../stores/taskStore';
 // // @ts-ignore
 // import secrets from 'secrets';
 export function LogIn() {
   const [tokenAvailability, setTokenAvailability] = useState<boolean>(false);
-  const [calendarListings, setCalendarListings] = useState<GoogleCalendarListing[]>([] as GoogleCalendarListing[]);
+  const [calendarListings, setCalendarListings] = useState<
+    GoogleCalendarListing[]
+  >([] as GoogleCalendarListing[]);
   const [userProfile, setUserProfile] = useState<GoogleUserObj>(
     {} as GoogleUserObj
   );
+  const { tasks, append, remove, toggleCompletedState } = useTasksStore();
   async function checkExistingToken() {
     const response = await chrome.storage.session.get(
       'lockIn-curr-google-token'
@@ -75,8 +84,8 @@ export function LogIn() {
 
   async function handleSelectionClick(e: React.MouseEvent) {
     //@ts-ignore
-    const calendarId = e.target.value
-    
+    const calendarId = e.target.value;
+
     const tokenObj = await chrome.storage.session.get(
       'lockIn-curr-google-token'
     );
@@ -87,7 +96,11 @@ export function LogIn() {
     const timeMin = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     // Set timeMax to midnight tomorrow
-    const timeMax = new Date(now.getFullYear(), now.getMonth(), now.getDate()+ 1);
+    const timeMax = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + 1
+    );
     const response = await fetch(
       `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?timeMax=${timeMax.toISOString()}&timeMin=${timeMin.toISOString()}&eventTypes=default`,
       {
@@ -97,13 +110,24 @@ export function LogIn() {
         },
       }
     );
-    
-    const data : GoogleCalendarEventListing = await response.json()
-    console.log(data.items)
 
-
+    const data: GoogleCalendarEventListing = await response.json();
+    const events: GoogleCalendarEvent[] = data.items;
+    events.forEach((event) => {
+      const newTask = {} as TaskType;
+      newTask.title = event.summary;
+      newTask.id = window.crypto.randomUUID();
+      newTask.state = 'new';
+      newTask.times = [
+        {
+          startTime: event.start.dateTime,
+          endTime: event.end.dateTime,
+        },
+      ];
+      append(newTask);
+    });
   }
-  console.log(calendarListings)
+  console.log(calendarListings);
   return (
     <>
       <div className="Login-form-container">
@@ -132,6 +156,24 @@ export function LogIn() {
               </select>
               <button type="submit">submit</button>
             </form>
+            <h1>current Tasks:</h1>
+            <div>
+              {tasks.map((task, id) =>
+                task.times.length > 1 ? (
+                  <>
+                    <p key={id}>{task.title}</p>
+                    <p>
+                      {task.times[0].startTime.toISOString()} -{' '}
+                      {task.times[0].endTime.toISOString()}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p key={id}>{task.title}</p>
+                  </>
+                )
+              )}
+            </div>
           </>
         )}
       </div>
