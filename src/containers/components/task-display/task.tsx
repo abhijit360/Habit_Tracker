@@ -1,10 +1,10 @@
-import React from "react";
-import "./task.css";
-import { TaskType } from "../../../../types";
-import { useTasksStore } from "../../../../store";
-import editIcon from "../../../assets/img/edit.svg";
-import deleteIcon from "../../../assets/img/delete.svg"
-import playIcon from "../../../assets/img/play.svg"
+import React from 'react';
+import './task.css';
+import { TaskType } from '../../../../types';
+import { useTasksStore } from '../../../../stores/taskStore';
+import editIcon from '../../../assets/img/edit.svg';
+import deleteIcon from '../../../assets/img/delete.svg';
+import playIcon from '../../../assets/img/play.svg';
 
 export function Task({ id, title, body, times, state }: TaskType) {
   function formatTime(date: Date) {
@@ -14,13 +14,16 @@ export function Task({ id, title, body, times, state }: TaskType) {
     return { h: hours, m: minutes, s: seconds };
   }
 
-  const {remove} = useTasksStore()
+  const { remove } = useTasksStore();
 
-  function timeToString( data: {h: number, m:number, s:number}){
-    const hours = data.h.toString().length === 1 ? `0${data.h}` : data.h.toString()
-    const minutes = data.m.toString().length === 1 ? `0${data.m}` : data.m.toString()
-    const seconds = data.s.toString().length === 1 ? `0${data.s}` : data.s.toString()
-    return `${hours}:${minutes}:${seconds}`
+  function timeToString(data: { h: number; m: number; s: number }) {
+    const hours =
+      data.h.toString().length === 1 ? `0${data.h}` : data.h.toString();
+    const minutes =
+      data.m.toString().length === 1 ? `0${data.m}` : data.m.toString();
+    const seconds =
+      data.s.toString().length === 1 ? `0${data.s}` : data.s.toString();
+    return `${hours}:${minutes}:${seconds}`;
   }
   const time_passed = times
     .map((time) =>
@@ -40,18 +43,16 @@ export function Task({ id, title, body, times, state }: TaskType) {
     <>
       <div className="task-container">
         <p className="task-name">{title}</p>
-        {state === "new" ? (
+        {state === 'new' ? (
           <p className="task-date">
             {/* {formatTime(new Date(endTime.getTime() - startTime.getTime()))} */}
             SCHEDULED-TIME-HERE
           </p>
         ) : (
-          <p className="task-date">
-            {timeToString(time_passed)}
-          </p>
+          <p className="task-date">{timeToString(time_passed)}</p>
         )}
         <div className="task-utilities">
-          {state !== "new" ? (
+          {state !== 'new' ? (
             <>
               <img src={editIcon} alt="continue or edit time entry" />
             </>
@@ -60,7 +61,11 @@ export function Task({ id, title, body, times, state }: TaskType) {
               <img src={playIcon} alt="start time entry" />
             </>
           )}
-          <img src={deleteIcon} onClick={() => remove(id)} alt="delete time entry" />
+          <img
+            src={deleteIcon}
+            onClick={() => remove(id)}
+            alt="delete time entry"
+          />
         </div>
       </div>
     </>
