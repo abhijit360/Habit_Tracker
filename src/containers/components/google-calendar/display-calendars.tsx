@@ -3,7 +3,7 @@ import {
   GoogleCalendarEvent,
   GoogleCalendarEventListing,
   GoogleCalendarListing,
-  TaskType
+  TaskType,
 } from '../../../../types';
 
 import { useTasksStore } from '../../../../stores/taskStore';
@@ -11,17 +11,14 @@ interface DisplayCalendarProps {
   CalendarList: GoogleCalendarListing[];
 }
 
-function handleCalendarSelect(e: React.SyntheticEvent) {
-  const target = e.target as HTMLInputElement;
-  target.disabled = true; // this should be reset by using the calendar.id
-}
+// function handleCalendarSelect(e: React.ChangeEvent) {
+//   const target = e.target as HTMLInputElement;
+//   target.disabled = true; // this should be reset by using the calendar.id
+// }
 
 export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
   const { tasks, append, remove } = useTasksStore();
-  const [calendarListings, setCalendarListings] = useState<GoogleCalendarListing[]>(CalendarList);
-  const [calendarEvents, setCalendarEvents] = useState<GoogleCalendarEvent[]>([] as GoogleCalendarEvent[]);
-
-  async function handleSelectionClick(e: React.MouseEvent) {
+  async function handleCalendarSelect(e: React.MouseEvent) {
     const target = e.target as HTMLInputElement;
     const calendarId = target.value;
 
@@ -55,38 +52,48 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
       newTask.state = 'new';
       newTask.times = [
         {
-          startTime: event.start.dateTime,
-          endTime: event.end.dateTime,
+          startTime: new Date(event.start.dateTime),
+          endTime: new Date(event.end.dateTime),
         },
       ];
       append(newTask);
     });
   }
-
+  console.log('tasks', tasks);
   return (
     <div className="calendar-container">
-      {calendarListings.map((calendar) => (
-        <>
-          <input
-            type="radio"
-            value={calendar.id}
-            multiple={true}
-            onSelect={handleCalendarSelect}
-          >
-            {calendar.summary}
-          </input>
-          <div className="calendar-events-container">
-            {tasks.map((task) => (
-              <>
-                <div className="preliminary-task-display">
-                  <p>{task.title}</p>
-                  <button onClick={() => remove(task.id)}>remove</button>
-                </div>
-              </>
-            ))}
-          </div>
-        </>
-      ))}
+      <p>Select which calendar and tasks to import</p>
+      {CalendarList.length > 0 ? (
+        CalendarList.map((calendar, index) => (
+          <>
+            <label>
+              <input
+                type="radio"
+                name="calendar"
+                value={calendar.id}
+                onChange={handleCalendarSelect}
+              />
+              {calendar.summary}
+            </label>
+          </>
+        ))
+      ) : (
+        <p>No Calendar's to Import</p>
+      )}
+      <div className="calendar-events-container">
+        {tasks.map((task) => (
+          <>
+            <div style={{backgroundColor: "white"}} className="preliminary-task-display">
+              <p style={{ color: 'black' }}>{task.title}</p>
+              <p style={{ color: 'black' }}>
+                {task.times[0].startTime.toISOString()} -{' '}
+                {task.times[0].endTime.toISOString()}
+              </p>
+              <button onClick={() => remove(task.id)}>remove</button>
+            </div>
+          </>
+        ))}
+      </div>
     </div>
   );
 }
