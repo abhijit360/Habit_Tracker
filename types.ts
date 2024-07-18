@@ -16,6 +16,8 @@ export type GoogleUserObj = {
   email_verified: boolean
 }
 
+export type Pages = "Login" | "TaskDisplay" | "TaskEdit" | "TaskAdd" | "TaskTimer"
+
 export type GoogleCalendarListing =  {
   "kind": string,
   "etag": number,
