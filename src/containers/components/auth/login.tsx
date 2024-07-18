@@ -71,6 +71,12 @@ export function LogIn() {
         },
       }
     );
+    console.log('response?', response.ok);
+    if (!response.ok) {
+      setTokenAvailability(false);
+      await chrome.storage.session.set({'lockIn-curr-google-token': null});
+      return;
+    }
     const data: any = await response.json();
     const calendars: GoogleCalendarListing[] = data['items'];
     setCalendarListings(calendars);
@@ -156,7 +162,7 @@ export function LogIn() {
               </select>
               <button type="submit">submit</button>
             </form>
-            <h1>current Tasks:</h1>
+            {/* <h1>current Tasks:</h1> */}
             <div>
               {tasks.map((task, id) =>
                 task.times.length > 1 ? (

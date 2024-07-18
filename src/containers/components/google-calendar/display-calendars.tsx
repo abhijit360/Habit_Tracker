@@ -12,7 +12,6 @@ interface DisplayCalendarProps {
 function handleCalendarSelect(e: React){
     const target = e.target as HTMLInputElement
     target.disabled = true // this should be reset by using the calendar.id
-
 }
 
 export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
