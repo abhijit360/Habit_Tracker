@@ -7,8 +7,6 @@ import type {
   TaskType,
 } from '../../../../types';
 import { useTasksStore } from '../../../../stores/taskStore';
-// // @ts-ignore
-// import secrets from 'secrets';
 export function LogIn() {
   const [tokenAvailability, setTokenAvailability] = useState<boolean>(false);
   const [calendarListings, setCalendarListings] = useState<
