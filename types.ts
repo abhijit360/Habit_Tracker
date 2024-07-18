@@ -50,7 +50,7 @@ export type GoogleCalendarEventListing = {
   ],
   "nextPageToken": string,
   "nextSyncToken": string,
-  "items": googleCalendarEvent[]
+  "items": GoogleCalendarEvent[]
 }
 
 export type GoogleCalendarEvent = {
