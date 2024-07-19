@@ -5,8 +5,10 @@ import { useTasksStore } from '../../../../stores/taskStore';
 import editIcon from '../../../assets/img/edit.svg'
 import deleteIcon from '../../../assets/img/delete.svg';
 import playIcon from '../../../assets/img/play.svg';
+import { useNavigationStore } from '../../../../stores/navigationStore';
 
 export function Task({ id, title, body, time, state }: TaskType) {
+  const {updateCurrentTask, updateNavigation} = useNavigationStore()
   function formatTime(date: Date) {
     const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes();
@@ -29,6 +31,11 @@ export function Task({ id, title, body, time, state }: TaskType) {
     new Date(time.endTime.getTime() - time.startTime.getTime())
   );
 
+  function handleStartTask(){
+    updateCurrentTask(id)
+    updateNavigation("TaskTimer")
+  }
+
   return (
     <>
       <div className="task-container">
@@ -47,7 +54,7 @@ export function Task({ id, title, body, time, state }: TaskType) {
             </>
           ) : (
             <>
-              <img src={playIcon} alt="start time entry" />
+              <img src={playIcon} alt="start time entry" onClick={handleStartTask}/>
             </>
           )}
           <img

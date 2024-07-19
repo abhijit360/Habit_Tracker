@@ -9,9 +9,10 @@ interface TimerProps {
   minutes: number;
   seconds: number;
   started: boolean;
+  updateTaskTime: (time: {h: number, m:number, s:number}) => void;
 }
 
-export function Timer({ hours, minutes, seconds, started }: TimerProps) {
+export function Timer({ hours, minutes, seconds, started, updateTaskTime }: TimerProps) {
   const [toggleIcon, setToggleIcon] = useState<boolean>(started);
   const [currentTime, setCurrentTime] = useState<{
     h: number;
@@ -100,10 +101,10 @@ export function Timer({ hours, minutes, seconds, started }: TimerProps) {
   }
 
   async function pauseHandler() {
-    console.log('test2');
     setToggleIcon((prev) => !prev);
     const response = await chrome.runtime.sendMessage({ type: 'pause-timer' });
     console.log('pause response', response);
+    //  update the time here
   }
 
   return (

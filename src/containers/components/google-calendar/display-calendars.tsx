@@ -51,6 +51,7 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
       const newTask = {} as TaskType;
       newTask.title = event.summary;
       newTask.id = window.crypto.randomUUID();
+      newTask.body = event.description;
       newTask.state = 'new';
       newTask.time = {
         startTime: new Date(event.start.dateTime),
