@@ -2,11 +2,11 @@ import React from 'react';
 import './task.css';
 import { TaskType } from '../../../../types';
 import { useTasksStore } from '../../../../stores/taskStore';
-import editIcon from '../../../assets/img/edit.svg';
+import editIcon from '../../../assets/img/edit.svg'
 import deleteIcon from '../../../assets/img/delete.svg';
 import playIcon from '../../../assets/img/play.svg';
 
-export function Task({ id, title, body, times, state }: TaskType) {
+export function Task({ id, title, body, time, state }: TaskType) {
   function formatTime(date: Date) {
     const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes();
@@ -25,19 +25,9 @@ export function Task({ id, title, body, times, state }: TaskType) {
       data.s.toString().length === 1 ? `0${data.s}` : data.s.toString();
     return `${hours}:${minutes}:${seconds}`;
   }
-  const time_passed = times
-    .map((time) =>
-      formatTime(new Date(time.endTime.getTime() - time.startTime.getTime()))
-    )
-    .reduce(
-      (acc, time) => {
-        acc.h += time.h;
-        acc.m += time.m;
-        acc.s += time.s;
-        return acc;
-      },
-      { h: 0, m: 0, s: 0 }
-    );
+  const time_passed = formatTime(
+    new Date(time.endTime.getTime() - time.startTime.getTime())
+  );
 
   return (
     <>
@@ -45,8 +35,7 @@ export function Task({ id, title, body, times, state }: TaskType) {
         <p className="task-name">{title}</p>
         {state === 'new' ? (
           <p className="task-date">
-            {/* {formatTime(new Date(endTime.getTime() - startTime.getTime()))} */}
-            SCHEDULED-TIME-HERE
+            {new Date(time.endTime.getTime()).toISOString()} - {new Date(time.startTime.getTime()).toISOString()}
           </p>
         ) : (
           <p className="task-date">{timeToString(time_passed)}</p>

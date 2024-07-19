@@ -10,7 +10,6 @@ import type { TaskType, Page } from '../../../types';
 
 function App() {
   const {
-    prev_navigation_states,
     current_navigation_state,
     updateNavigation,
     revertToPreviousState,
