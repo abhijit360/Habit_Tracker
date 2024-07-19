@@ -20,12 +20,11 @@ function App() {
     title: 'Task One',
     body: 'Task one test body',
     state: 'completed',
-    times: [
-      {
+    time:{
         startTime: new Date(Date.now()),
         endTime: new Date(Date.now() + 2 * 60 * 60 * 1000),
       },
-    ],
+    
   };
 
   function incrementNavigation(e: React.MouseEvent) {
