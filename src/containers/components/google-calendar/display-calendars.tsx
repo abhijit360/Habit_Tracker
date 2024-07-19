@@ -18,7 +18,7 @@ interface DisplayCalendarProps {
 // }
 
 export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
-  const {updateNavigation} = useNavigationStore()
+  const { updateNavigation } = useNavigationStore();
   const { tasks, append, remove } = useTasksStore();
   async function handleCalendarSelect(e: React.MouseEvent) {
     const target = e.target as HTMLInputElement;
@@ -52,12 +52,10 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
       newTask.title = event.summary;
       newTask.id = window.crypto.randomUUID();
       newTask.state = 'new';
-      newTask.times = [
-        {
-          startTime: new Date(event.start.dateTime),
-          endTime: new Date(event.end.dateTime),
-        },
-      ];
+      newTask.time = {
+        startTime: new Date(event.start.dateTime),
+        endTime: new Date(event.end.dateTime),
+      };
       append(newTask);
     });
   }
@@ -85,18 +83,23 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
       <div className="calendar-events-container">
         {tasks.map((task) => (
           <>
-            <div style={{backgroundColor: "white"}} className="preliminary-task-display">
+            <div
+              style={{ backgroundColor: 'white' }}
+              className="preliminary-task-display"
+            >
               <p style={{ color: 'black' }}>{task.title}</p>
               <p style={{ color: 'black' }}>
-                {task.times[0].startTime.toISOString()} -{' '}
-                {task.times[0].endTime.toISOString()}
+                {task.time.startTime.toISOString()} -{' '}
+                {task.time.endTime.toISOString()}
               </p>
               <button onClick={() => remove(task.id)}>remove</button>
             </div>
           </>
         ))}
       </div>
-      <button onClick={ () => updateNavigation("TaskDisplay")}>Continue to track</button>
+      <button onClick={() => updateNavigation('TaskDisplay')}>
+        Continue to track
+      </button>
     </div>
   );
 }

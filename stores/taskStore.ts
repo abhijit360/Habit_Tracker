@@ -27,7 +27,7 @@ export const useTasksStore = create<TasksState>((set) => ({
           ? ({
               id: task.id,
               body: task.body,
-              times: task.times,
+              time: task.time,
               state: status,
             } as TaskType)
           : task
