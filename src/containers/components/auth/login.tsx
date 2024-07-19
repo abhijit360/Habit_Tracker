@@ -7,8 +7,7 @@ import type {
   TaskType,
 } from '../../../../types';
 import { useTasksStore } from '../../../../stores/taskStore';
-// // @ts-ignore
-// import secrets from 'secrets';
+import { DisplayCalendar } from '../google-calendar/display-calendars';
 export function LogIn() {
   const [tokenAvailability, setTokenAvailability] = useState<boolean>(false);
   const [calendarListings, setCalendarListings] = useState<
@@ -71,6 +70,12 @@ export function LogIn() {
         },
       }
     );
+    console.log('response?', response.ok);
+    if (!response.ok) {
+      setTokenAvailability(false);
+      await chrome.storage.session.set({'lockIn-curr-google-token': null});
+      return;
+    }
     const data: any = await response.json();
     const calendars: GoogleCalendarListing[] = data['items'];
     setCalendarListings(calendars);
@@ -82,51 +87,6 @@ export function LogIn() {
     setTokenAvailability(false);
   }
 
-  async function handleSelectionClick(e: React.MouseEvent) {
-    //@ts-ignore
-    const calendarId = e.target.value;
-
-    const tokenObj = await chrome.storage.session.get(
-      'lockIn-curr-google-token'
-    );
-    // Get the current date
-    const now = new Date();
-
-    // Set timeMin to midnight today
-    const timeMin = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-
-    // Set timeMax to midnight tomorrow
-    const timeMax = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate() + 1
-    );
-    const response = await fetch(
-      `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?timeMax=${timeMax.toISOString()}&timeMin=${timeMin.toISOString()}&eventTypes=default`,
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${tokenObj['lockIn-curr-google-token']}`,
-        },
-      }
-    );
-
-    const data: GoogleCalendarEventListing = await response.json();
-    const events: GoogleCalendarEvent[] = data.items;
-    events.forEach((event) => {
-      const newTask = {} as TaskType;
-      newTask.title = event.summary;
-      newTask.id = window.crypto.randomUUID();
-      newTask.state = 'new';
-      newTask.times = [
-        {
-          startTime: event.start.dateTime,
-          endTime: event.end.dateTime,
-        },
-      ];
-      append(newTask);
-    });
-  }
   console.log(calendarListings);
   return (
     <>
@@ -142,38 +102,9 @@ export function LogIn() {
           <>
             <p>welcome {userProfile.given_name}</p>
             <p>Do you want to import today's google calendar events?</p>
-            <button>Import</button>
             <button>Skip</button>
             <button onClick={logoutHandler}>LogOut</button>
-            <p>Select which calendar's to import</p>
-            <form>
-              <select multiple={true}>
-                {calendarListings.map((listing) => (
-                  <option value={listing.id} onClick={handleSelectionClick}>
-                    {listing.summary}
-                  </option>
-                ))}
-              </select>
-              <button type="submit">submit</button>
-            </form>
-            <h1>current Tasks:</h1>
-            <div>
-              {tasks.map((task, id) =>
-                task.times.length > 1 ? (
-                  <>
-                    <p key={id}>{task.title}</p>
-                    <p>
-                      {task.times[0].startTime.toISOString()} -{' '}
-                      {task.times[0].endTime.toISOString()}
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p key={id}>{task.title}</p>
-                  </>
-                )
-              )}
-            </div>
+            <DisplayCalendar CalendarList={calendarListings} />
           </>
         )}
       </div>

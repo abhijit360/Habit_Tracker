@@ -16,6 +16,8 @@ export type GoogleUserObj = {
   email_verified: boolean
 }
 
+export type Page = "Login" | "TaskDisplay" | "TaskEdit" | "TaskAdd" | "TaskTimer"
+
 export type GoogleCalendarListing =  {
   "kind": string,
   "etag": number,
@@ -48,7 +50,7 @@ export type GoogleCalendarEventListing = {
   ],
   "nextPageToken": string,
   "nextSyncToken": string,
-  "items": googleCalendarEvent[]
+  "items": GoogleCalendarEvent[]
 }
 
 export type GoogleCalendarEvent = {
