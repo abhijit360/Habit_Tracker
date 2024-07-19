@@ -6,7 +6,7 @@ import { TaskTracker } from '../../containers/components/task-time-tracker/task-
 import { TaskEditor } from '../../containers/components/task-editor/task-editor';
 import { LogIn } from '../../containers/components/auth/login';
 import { useNavigationStore } from '../../../stores/navigationStore';
-import type { TaskType, Pages } from '../../../types';
+import type { TaskType, Page } from '../../../types';
 
 function App() {
   const {
@@ -30,7 +30,7 @@ function App() {
 
   function incrementNavigation(e: React.MouseEvent) {
     const target = e.target as HTMLButtonElement;
-    updateNavigation(target.value as Pages);
+    updateNavigation(target.value as Page);
   }
 
   return (

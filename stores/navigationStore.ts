@@ -1,15 +1,15 @@
 import { create } from 'zustand';
-import type { Pages } from '../types';
+import type { Page } from '../types';
 
 interface NavigationState {
-  prev_navigation_states: Pages[];
-  current_navigation_state: Pages;
-  updateNavigation: (page: Pages) => void;
+  prev_navigation_states: Page[];
+  current_navigation_state: Page;
+  updateNavigation: (page: Page) => void;
   revertToPreviousState: () => void;
 }
 
 export const useNavigationStore = create<NavigationState>((set) => ({
-  prev_navigation_states: [] as Pages[],
+  prev_navigation_states: [] as Page[],
   current_navigation_state: 'Login',
   updateNavigation: (page) => {
     set((state) => ({

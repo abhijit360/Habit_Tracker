@@ -7,6 +7,7 @@ import {
 } from '../../../../types';
 
 import { useTasksStore } from '../../../../stores/taskStore';
+import { useNavigationStore } from '../../../../stores/navigationStore';
 interface DisplayCalendarProps {
   CalendarList: GoogleCalendarListing[];
 }
@@ -17,6 +18,7 @@ interface DisplayCalendarProps {
 // }
 
 export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
+  const {updateNavigation} = useNavigationStore()
   const { tasks, append, remove } = useTasksStore();
   async function handleCalendarSelect(e: React.MouseEvent) {
     const target = e.target as HTMLInputElement;
@@ -78,7 +80,7 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
           </>
         ))
       ) : (
-        <p>No Calendar's to Import</p>
+        <p>No Calendars to Import</p>
       )}
       <div className="calendar-events-container">
         {tasks.map((task) => (
@@ -94,6 +96,7 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
           </>
         ))}
       </div>
+      <button onClick={ () => updateNavigation("TaskDisplay")}>Continue to track</button>
     </div>
   );
 }
