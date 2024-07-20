@@ -97,7 +97,7 @@ export function Timer({ hours, minutes, seconds, started, updateTaskTime }: Time
       type: 'end-timer',
     });
     console.log("deleting timer storage", response)
-    
+    await chrome.storage.session.set({"current-task-id": null})
   }
 
   async function pauseHandler() {

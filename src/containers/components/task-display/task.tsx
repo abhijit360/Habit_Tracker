@@ -6,9 +6,11 @@ import editIcon from '../../../assets/img/edit.svg'
 import deleteIcon from '../../../assets/img/delete.svg';
 import playIcon from '../../../assets/img/play.svg';
 import { useNavigationStore } from '../../../../stores/navigationStore';
+import { useErrorStore } from '../../../../stores/errorStore';
 
 export function Task({ id, title, body, time, state }: TaskType) {
   const {updateCurrentTask, updateNavigation} = useNavigationStore()
+  const {setError, removeError} = useErrorStore()
   function formatTime(date: Date) {
     const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes();
@@ -31,9 +33,18 @@ export function Task({ id, title, body, time, state }: TaskType) {
     new Date(new Date(time.endTime).getTime() - new Date(time.startTime).getTime())
   );
 
-  function handleStartTask(){
-    updateCurrentTask(id)
-    updateNavigation("TaskTimer")
+  async function handleStartTask(){
+    const key = await chrome.storage.session.get("current-task-id")
+    if(key["current-task-id"]){
+      if (id === key["current-task-id"]){
+        updateNavigation("TaskTimer")
+      }
+      setError("A task is currently in process")
+    }else{
+      await chrome.storage.session.set({"current-task-id": id})
+      updateCurrentTask(id)
+      updateNavigation("TaskTimer")
+    }
   }
 
   function formatDateString(date: Date): string{

@@ -1,19 +1,18 @@
 import './App.css';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TaskDisplay } from '../../containers/components/task-display/task-display';
 import { TaskHistory } from '../../containers/components/task-history/task-history';
 import { TaskTracker } from '../../containers/components/task-time-tracker/task-tracker';
 import { TaskEditor } from '../../containers/components/task-editor/task-editor';
 import { LogIn } from '../../containers/components/auth/login';
+import { Error } from '../../containers/components/miscellaneous/error';
 import { useNavigationStore } from '../../../stores/navigationStore';
+import {useErrorStore} from "../../../stores/errorStore"
 import type { TaskType, Page } from '../../../types';
 
 function App() {
-  const {
-    current_navigation_state,
-    updateNavigation,
-    revertToPreviousState,
-  } = useNavigationStore();
+  const {current_navigation_state,updateNavigation,revertToPreviousState,} = useNavigationStore();
+  const {error,removeError} = useErrorStore()
   const dummyTask: TaskType = {
     id: window.crypto.randomUUID(),
     title: 'Task One',
@@ -31,9 +30,17 @@ function App() {
     updateNavigation(target.value as Page);
   }
 
+  useEffect(() =>{
+    if(error != null){
+      removeError()
+    }
+  },[error,removeError])
+
   return (
     <div className="App">
       <header className="App-header">
+        {error && <Error error={error}/>
+          }
         <p>current navigation: {current_navigation_state}</p>
         <div className="nav-container">
           <button

@@ -1,0 +1,30 @@
+.error-container{
+    display: inline-flex;
+    flex-direction: row;
+    border-radius: 15px;
+    padding: 3px 5px;
+    gap: 10px;
+    background-color: "#7EA7C";
+    opacity: 0.85;
+    z-index: 1000;
+    /* animation: render;
+    animation-duration: 1s; */
+}
+
+.error-icon{
+    width: 24px;
+    height: 24px;
+}
+
+.error-text{
+    font-size:medium;
+    font-weight: bold;
+    color: black;
+}
+
+/* @keyframes render {
+    50% {
+      transform:
+        translate(100px, 0px)
+    }
+  } */
