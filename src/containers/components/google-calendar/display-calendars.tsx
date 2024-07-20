@@ -84,6 +84,7 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
           <>
             <label>
               <input
+                key={index}
                 type="radio"
                 name="calendar"
                 value={calendar.id}

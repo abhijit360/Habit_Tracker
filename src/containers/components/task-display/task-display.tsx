@@ -5,6 +5,7 @@ import './task-display.css';
 import { useTasksStore } from '../../../../stores/taskStore';
 export function TaskDisplay() {
   const { tasks } = useTasksStore();
+  console.log("all task id's", tasks.map((task) => task.id))
   return (
     <>
       <div className="task-display-container">

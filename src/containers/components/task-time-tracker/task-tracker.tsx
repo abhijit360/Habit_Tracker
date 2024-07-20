@@ -12,7 +12,7 @@ export function TaskTracker() {
   const { current_task_id } = useNavigationStore();
   const [currentTask, setCurrentTask] = useState<TaskType>({} as TaskType);
   useEffect(() => {
-    setCurrentTask(tasks.filter((task) => task.id !== current_task_id)[0]);
+    setCurrentTask(tasks.filter((task) => task.id === current_task_id)[0]);
   }, [current_task_id, tasks]);
 
   function updateTime(time: { h: number; m: number; s: number }) {
