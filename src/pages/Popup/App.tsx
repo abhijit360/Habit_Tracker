@@ -32,7 +32,7 @@ function App() {
 
   useEffect(() =>{
     if(error != null){
-      removeError()
+      setTimeout(removeError, 5000)
     }
   },[error,removeError])
 

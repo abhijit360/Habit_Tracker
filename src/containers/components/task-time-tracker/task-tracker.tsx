@@ -9,7 +9,7 @@ import { TaskType } from '../../../../types';
 
 export function TaskTracker() {
   const { tasks, updateTaskTime } = useTasksStore();
-  const { current_task_id } = useNavigationStore();
+  const { current_task_id, updateCurrentTask  } = useNavigationStore();
   const [currentTask, setCurrentTask] = useState<TaskType>({} as TaskType);
   useEffect(() => {
     setCurrentTask(tasks.filter((task) => task.id === current_task_id)[0]);
@@ -19,7 +19,21 @@ export function TaskTracker() {
     updateTaskTime(currentTask.id, time);
   }
 
+  async function checkForPeristingTask(){
+    const task_id_obj = await chrome.storage.session.get("current-task-id")
+    console.log("task_id_obj", task_id_obj)
+    console.log("tasks", tasks)
+    if(task_id_obj["current-task-id"]){
+      setCurrentTask(tasks.filter((task) => task.id === task_id_obj["current-task-id"])[0]);
+      updateCurrentTask(task_id_obj["current-task-id"])
+    }
+  }
 
+  useEffect(() =>{
+    checkForPeristingTask()
+  },[])
+
+  console.log("current task", currentTask)
   return (
     <>
       {

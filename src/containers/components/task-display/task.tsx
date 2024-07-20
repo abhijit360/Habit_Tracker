@@ -38,6 +38,7 @@ export function Task({ id, title, body, time, state }: TaskType) {
     if(key["current-task-id"]){
       if (id === key["current-task-id"]){
         updateNavigation("TaskTimer")
+        return
       }
       setError("A task is currently in process")
     }else{

@@ -2,13 +2,17 @@
     display: inline-flex;
     flex-direction: row;
     border-radius: 15px;
-    padding: 3px 5px;
+    padding: 0px 3px;
     gap: 10px;
-    background-color: "#7EA7C";
+    background-color: rgb(231, 237, 247);
     opacity: 0.85;
     z-index: 1000;
-    /* animation: render;
-    animation-duration: 1s; */
+    align-items: center;
+    position: relative;
+    top: 10px;
+    right: -25px; 
+    animation: render;
+    animation-duration: 1s;
 }
 
 .error-icon{
@@ -22,9 +26,9 @@
     color: black;
 }
 
-/* @keyframes render {
+@keyframes render {
     50% {
       transform:
-        translate(100px, 0px)
+        translate(-100px, 0px)
     }
-  } */
+  }
