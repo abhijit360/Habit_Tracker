@@ -25,15 +25,25 @@ export function Task({ id, title, body, time, state }: TaskType) {
       data.m.toString().length === 1 ? `0${data.m}` : data.m.toString();
     const seconds =
       data.s.toString().length === 1 ? `0${data.s}` : data.s.toString();
-    return `${hours}:${minutes}:${seconds}`;
+    return `${hours} h:${minutes} m:${seconds} s`;
   }
   const time_passed = formatTime(
-    new Date(time.endTime.getTime() - time.startTime.getTime())
+    new Date(new Date(time.endTime).getTime() - new Date(time.startTime).getTime())
   );
 
   function handleStartTask(){
     updateCurrentTask(id)
     updateNavigation("TaskTimer")
+  }
+
+  function formatDateString(date: Date): string{
+     const hours =
+     date.getHours().toString().length === 1 ? `0${date.getHours().toString()}` : date.getHours().toString();
+    const minutes =
+    date.getMinutes().toString().length === 1 ? `0${date.getMinutes().toString()}` : date.getMinutes().toString();
+    const seconds =
+    date.getSeconds().toString().length === 1 ? `0${date.getSeconds().toString()}` : date.getSeconds().toString();
+    return `${hours}:${minutes}:${seconds}`
   }
 
   return (
@@ -42,7 +52,8 @@ export function Task({ id, title, body, time, state }: TaskType) {
         <p className="task-name">{title}</p>
         {state === 'new' ? (
           <p className="task-date">
-            {new Date(time.endTime.getTime()).toISOString()} - {new Date(time.startTime.getTime()).toISOString()}
+            {/* testing */}
+            {formatDateString(new Date(time.startTime))} - {formatDateString(new Date(time.endTime))}
           </p>
         ) : (
           <p className="task-date">{timeToString(time_passed)}</p>

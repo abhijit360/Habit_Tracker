@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   GoogleCalendarEvent,
   GoogleCalendarEventListing,
@@ -11,11 +11,6 @@ import { useNavigationStore } from '../../../../stores/navigationStore';
 interface DisplayCalendarProps {
   CalendarList: GoogleCalendarListing[];
 }
-
-// function handleCalendarSelect(e: React.ChangeEvent) {
-//   const target = e.target as HTMLInputElement;
-//   target.disabled = true; // this should be reset by using the calendar.id
-// }
 
 export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
   const { updateNavigation } = useNavigationStore();
@@ -60,6 +55,26 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
       append(newTask);
     });
   }
+
+  async function handleTaskStateCreation() {
+    await chrome.storage.session.set({ current_task_state: JSON.stringify(tasks) });
+    updateNavigation('TaskDisplay');
+  }
+
+  async function checkExistingTaskState() {
+    const response = await chrome.storage.session.get('current_task_state');
+    if (response['current_task_state']) {
+      console.log('stored tasks:', response['current_task_state']);
+      const val: TaskType[] = JSON.parse(response['current_task_state']);
+      val.forEach((task: TaskType) => append(task));
+      val.forEach((task) => console.log('individual task', task.time.endTime));
+    }
+  }
+
+  useEffect(() => {
+    checkExistingTaskState();
+  }, []);
+
   console.log('tasks', tasks);
   return (
     <div className="calendar-container">
@@ -89,16 +104,20 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
               className="preliminary-task-display"
             >
               <p style={{ color: 'black' }}>{task.title}</p>
-              <p style={{ color: 'black' }}>
+              {/* <p style={{ color: 'black' }}>
                 {task.time.startTime.toISOString()} -{' '}
                 {task.time.endTime.toISOString()}
+              </p> */}
+              <p style={{ color: 'black' }}>
+                {task.time.startTime.toString()} -{' '}
+                {task.time.endTime.toString()}
               </p>
               <button onClick={() => remove(task.id)}>remove</button>
             </div>
           </>
         ))}
       </div>
-      <button onClick={() => updateNavigation('TaskDisplay')}>
+      <button onClick={() => handleTaskStateCreation()}>
         Continue to track
       </button>
     </div>
