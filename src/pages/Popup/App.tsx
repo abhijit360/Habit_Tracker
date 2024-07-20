@@ -36,6 +36,8 @@ function App() {
     }
   },[error,removeError])
 
+  console.log("current error", error)
+
   return (
     <div className="App">
       <header className="App-header">

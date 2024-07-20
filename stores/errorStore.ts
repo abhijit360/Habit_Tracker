@@ -8,6 +8,6 @@ interface ErrorState{
 
 export const useErrorStore = create<ErrorState>((set) => ({
   error: null,
-  setError: (error) => set((state => ({error: error}))),
-  removeError: () => set((state) => ({error: null}))
+  setError: (error) => set((state => ({...state, error: error}))),
+  removeError: () => set((state) => ({...state,error: null}))
 }));

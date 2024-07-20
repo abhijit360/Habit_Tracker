@@ -10,7 +10,7 @@ import { useErrorStore } from '../../../../stores/errorStore';
 
 export function Task({ id, title, body, time, state }: TaskType) {
   const {updateCurrentTask, updateNavigation} = useNavigationStore()
-  const {setError, removeError} = useErrorStore()
+  const {setError} = useErrorStore()
   function formatTime(date: Date) {
     const hours = date.getUTCHours();
     const minutes = date.getUTCMinutes();
@@ -41,7 +41,6 @@ export function Task({ id, title, body, time, state }: TaskType) {
       }
       setError("A task is currently in process")
     }else{
-      await chrome.storage.session.set({"current-task-id": id})
       updateCurrentTask(id)
       updateNavigation("TaskTimer")
     }
@@ -76,7 +75,7 @@ export function Task({ id, title, body, time, state }: TaskType) {
             </>
           ) : (
             <>
-              <img src={playIcon} alt="start time entry" onClick={handleStartTask}/>
+              <img src={playIcon} alt="start time entry" onClick={() => handleStartTask()}/>
             </>
           )}
           <img
