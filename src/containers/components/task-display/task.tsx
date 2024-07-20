@@ -9,7 +9,7 @@ import { useNavigationStore } from '../../../../stores/navigationStore';
 import { useErrorStore } from '../../../../stores/errorStore';
 
 export function Task({ id, title, body, time, state }: TaskType) {
-  const {updateCurrentTask, updateNavigation} = useNavigationStore()
+  const {updateCurrentTask, updateNavigation, current_task_id} = useNavigationStore()
   const {setError} = useErrorStore()
   function formatTime(date: Date) {
     const hours = date.getUTCHours();
@@ -47,6 +47,15 @@ export function Task({ id, title, body, time, state }: TaskType) {
     }
   }
 
+  async function handleEditTask(){
+    if(id === current_task_id){
+      setError("This task is currently being tracked.")
+      return
+    }
+    updateNavigation("TaskEdit")
+  }
+
+
   function formatDateString(date: Date): string{
      const hours =
      date.getHours().toString().length === 1 ? `0${date.getHours().toString()}` : date.getHours().toString();
@@ -79,6 +88,11 @@ export function Task({ id, title, body, time, state }: TaskType) {
               <img src={playIcon} alt="start time entry" onClick={() => handleStartTask()}/>
             </>
           )}
+          <img
+            src={editIcon}
+            onClick={() => handleEditTask()}
+            alt="delete time entry"
+          />
           <img
             src={deleteIcon}
             onClick={() => remove(id)}

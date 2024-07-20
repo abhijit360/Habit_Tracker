@@ -11,7 +11,7 @@ import {useErrorStore} from "../../../stores/errorStore"
 import type { TaskType, Page } from '../../../types';
 
 function App() {
-  const {current_navigation_state,updateNavigation,revertToPreviousState,} = useNavigationStore();
+  const {current_navigation_state,updateNavigation,revertToPreviousState,updateCurrentTask} = useNavigationStore();
   const {error,removeError} = useErrorStore()
   const dummyTask: TaskType = {
     id: window.crypto.randomUUID(),
@@ -35,6 +35,17 @@ function App() {
       setTimeout(removeError, 5000)
     }
   },[error,removeError])
+
+  async function checkForPeristingTaskState(){
+    const task_id_obj = await chrome.storage.session.get("current-task-id")
+    if(task_id_obj["current-task-id"]){
+      updateCurrentTask(task_id_obj["current-task-id"])
+    }
+  }
+
+  useEffect(() =>{
+    checkForPeristingTaskState()
+  },[])
 
   console.log("current error", error)
 
