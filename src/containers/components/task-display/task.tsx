@@ -52,6 +52,7 @@ export function Task({ id, title, body, time, state }: TaskType) {
       setError("This task is currently being tracked.")
       return
     }
+    updateCurrentTask(id)
     updateNavigation("TaskEdit")
   }
 
