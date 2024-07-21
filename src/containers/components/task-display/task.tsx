@@ -9,7 +9,7 @@ import { useNavigationStore } from '../../../../stores/navigationStore';
 import { useErrorStore } from '../../../../stores/errorStore';
 
 export function Task({ id, title, body, time, state }: TaskType) {
-  const {updateCurrentTask, updateNavigation, current_task_id} = useNavigationStore()
+  const {updateCurrentTask, updateNavigation, updateCurrentEditTask, current_task_id} = useNavigationStore()
   const {setError} = useErrorStore()
   function formatTime(date: Date) {
     const hours = date.getUTCHours();
@@ -48,11 +48,7 @@ export function Task({ id, title, body, time, state }: TaskType) {
   }
 
   async function handleEditTask(){
-    if(id === current_task_id){
-      setError("This task is currently being tracked.")
-      return
-    }
-    updateCurrentTask(id)
+    updateCurrentEditTask(id)
     updateNavigation("TaskEdit")
   }
 

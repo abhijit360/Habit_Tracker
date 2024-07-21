@@ -5,6 +5,7 @@ import type { TaskType } from '../../../../types';
 import deleteIcon from '../../../assets/img/delete.svg';
 import { useNavigationStore } from '../../../../stores/navigationStore';
 import { useTasksStore } from '../../../../stores/taskStore';
+import { Task } from '../task-display/task';
 
 const resolver: Resolver<TaskType> = async (values) => {
   const errors: any = {};
@@ -64,34 +65,50 @@ const resolver: Resolver<TaskType> = async (values) => {
   };
 };
 
-export function TaskEditor({ TaskData }: { TaskData: TaskType }) {
+function formatDateString(date: Date): string {
+  const pad = (number: number) => (number < 10 ? '0' : '') + number;
+  return (
+    date.getFullYear() +
+    '-' +
+    pad(date.getMonth() + 1) +
+    '-' +
+    pad(date.getDate()) +
+    'T' +
+    pad(date.getHours()) +
+    ':' +
+    pad(date.getMinutes())
+  );
+}
+
+export function TaskEditor({ TaskData }: { TaskData: TaskType | null }) {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
     control,
   } = useForm<TaskType>({ resolver });
-  const [currentTask, setCurrentTask] = useState<TaskType>({} as TaskType);
-  const onSubmit = handleSubmit((data) => console.log(data));
-  const { current_task_id } = useNavigationStore();
-  const { tasks } = useTasksStore();
 
-  const getCurrentTask = useCallback(() => {
-    setCurrentTask(tasks.filter((task) => task.id === current_task_id)[0]);
-  },[current_task_id, tasks]);
+  const [startTime, setStartTime] = useState<string>('');
+  const [endTime, setEndTime] = useState<string>('');
 
   useEffect(() => {
-    getCurrentTask();
-  }, [getCurrentTask]);
+    if (TaskData) {
+      setValue('title', TaskData.title);
+      setValue('body', TaskData.body);
+      setStartTime(formatDateString(new Date(TaskData.time.startTime)));
+      setEndTime(formatDateString(new Date(TaskData.time.endTime)));
+    }
+  }, [TaskData, setValue]);
 
   return (
     <>
+    {TaskData && 
       <div className="task-editor-container">
-        <form onSubmit={onSubmit}>
+        <form onSubmit={(e) => console.log("form-onsubmit",e)}>
           <input
             {...register('title')}
             placeholder="Task Title"
-            value={currentTask.title}
             className="task-title"
           />
           {errors?.title && (
@@ -101,7 +118,7 @@ export function TaskEditor({ TaskData }: { TaskData: TaskType }) {
             id="body"
             {...register('body')}
             placeholder="Task Body"
-            value={currentTask.body}
+
             className="task-body"
           />
           {errors?.body && (
@@ -111,7 +128,7 @@ export function TaskEditor({ TaskData }: { TaskData: TaskType }) {
             <input
               className="time-slot-selector"
               {...register(`time.startTime`)}
-              value={new Date(currentTask.time.startTime).toISOString()}
+              value={startTime}
               type="datetime-local"
             />
             {errors?.time?.startTime && (
@@ -123,7 +140,7 @@ export function TaskEditor({ TaskData }: { TaskData: TaskType }) {
             <input
               className="time-slot-selector"
               {...register(`time.endTime`)}
-              value={new Date(currentTask.time.endTime).toISOString()}
+              value={endTime}
               type="datetime-local"
             />
             {errors?.time?.endTime && (
@@ -132,9 +149,13 @@ export function TaskEditor({ TaskData }: { TaskData: TaskType }) {
               </span>
             )}
           </div>
-          <input type="submit" />
+          <input type="submit" onSubmit={(e) => console.log("submitting form",e) }/>
         </form>
       </div>
+    }
+    {!TaskData && 
+      <p>Select a task to edit</p>
+    }
     </>
   );
 }

@@ -5,14 +5,17 @@ interface NavigationState {
   prev_navigation_states: Page[];
   current_navigation_state: Page;
   current_task_id : string | null;
+  current_edit_task_id: string | null;
   updateNavigation: (page: Page) => void;
   updateCurrentTask: (taskId : string) => void;
+  updateCurrentEditTask: (taskId: string) => void;
   revertToPreviousState: () => void;
 }
 
 export const useNavigationStore = create<NavigationState>((set) => ({
   prev_navigation_states: [] as Page[],
   current_task_id: null,
+  current_edit_task_id: null,
   current_navigation_state: 'Login',
   updateNavigation: (page) => {
     set((state) => ({
@@ -35,5 +38,9 @@ export const useNavigationStore = create<NavigationState>((set) => ({
   updateCurrentTask: (taskId) => {set((state) => ({
     ...state,
     current_task_id: taskId
-  }))}
+  }))},
+  updateCurrentEditTask: (taskId) => {set((state) => ({
+    ...state,
+    current_edit_task_id: taskId
+  }))},
 }));

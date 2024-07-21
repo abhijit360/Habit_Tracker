@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { TaskDisplay } from '../../containers/components/task-display/task-display';
 import { TaskHistory } from '../../containers/components/task-history/task-history';
 import { TaskTracker } from '../../containers/components/task-time-tracker/task-tracker';
@@ -7,53 +7,50 @@ import { TaskEditor } from '../../containers/components/task-editor/task-editor'
 import { LogIn } from '../../containers/components/auth/login';
 import { Error } from '../../containers/components/miscellaneous/error';
 import { useNavigationStore } from '../../../stores/navigationStore';
-import {useErrorStore} from "../../../stores/errorStore"
+import { useErrorStore } from '../../../stores/errorStore';
 import type { TaskType, Page } from '../../../types';
+import { useTasksStore } from '../../../stores/taskStore';
 
 function App() {
-  const {current_navigation_state,updateNavigation,revertToPreviousState,updateCurrentTask} = useNavigationStore();
-  const {error,removeError} = useErrorStore()
-  const dummyTask: TaskType = {
-    id: window.crypto.randomUUID(),
-    title: 'Task One',
-    body: 'Task one test body',
-    state: 'completed',
-    time:{
-        startTime: new Date(Date.now()),
-        endTime: new Date(Date.now() + 2 * 60 * 60 * 1000),
-      },
-    
-  };
+  const {
+    current_navigation_state,
+    current_task_id,
+    current_edit_task_id,
+    updateNavigation,
+    revertToPreviousState,
+    updateCurrentTask,
+  } = useNavigationStore();
+  const { error, removeError } = useErrorStore();
+  const {tasks} = useTasksStore()
 
   function incrementNavigation(e: React.MouseEvent) {
     const target = e.target as HTMLButtonElement;
     updateNavigation(target.value as Page);
   }
 
-  useEffect(() =>{
-    if(error != null){
-      setTimeout(removeError, 5000)
+  useEffect(() => {
+    if (error != null) {
+      setTimeout(removeError, 5000);
     }
-  },[error,removeError])
+  }, [error, removeError]);
 
-  async function checkForPeristingTaskState(){
-    const task_id_obj = await chrome.storage.session.get("current-task-id")
-    if(task_id_obj["current-task-id"]){
-      updateCurrentTask(task_id_obj["current-task-id"])
+  const checkForPeristingTaskState = useCallback(async () => {
+    const task_id_obj = await chrome.storage.session.get('current-task-id');
+    if (task_id_obj['current-task-id']) {
+      updateCurrentTask(task_id_obj['current-task-id']);
     }
-  }
+  },[updateCurrentTask]);
 
-  useEffect(() =>{
-    checkForPeristingTaskState()
-  },[])
+  useEffect(() => {
+    checkForPeristingTaskState();
+  }, [checkForPeristingTaskState]);
 
-  console.log("current error", error)
+  console.log('current error', error);
 
   return (
     <div className="App">
       <header className="App-header">
-        {error && <Error error={error}/>
-          }
+        {error && <Error error={error} />}
         <p>current navigation: {current_navigation_state}</p>
         <div className="nav-container">
           <button
@@ -104,7 +101,7 @@ function App() {
         ) : current_navigation_state === 'TaskDisplay' ? (
           <TaskDisplay />
         ) : current_navigation_state === 'TaskEdit' ? (
-          <TaskEditor TaskData={dummyTask} />
+          <TaskEditor TaskData={current_edit_task_id ? tasks.filter((task) => task.id === current_edit_task_id )[0] : null} />
         ) : current_navigation_state === 'TaskAdd' ? (
           <p>coming soon</p>
         ) : (
