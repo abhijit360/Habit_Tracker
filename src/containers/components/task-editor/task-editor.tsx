@@ -1,11 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import './task-editor.css';
-import { useForm, Resolver, useFieldArray } from 'react-hook-form';
+import { useForm, Resolver, SubmitHandler } from 'react-hook-form';
 import type { TaskType } from '../../../../types';
-import deleteIcon from '../../../assets/img/delete.svg';
 import { useNavigationStore } from '../../../../stores/navigationStore';
 import { useTasksStore } from '../../../../stores/taskStore';
-import { Task } from '../task-display/task';
 
 const resolver: Resolver<TaskType> = async (values) => {
   const errors: any = {};
@@ -21,12 +19,7 @@ const resolver: Resolver<TaskType> = async (values) => {
     };
   }
 
-  if (!values.body) {
-    errors.body = {
-      type: 'required',
-      message: 'Body field is required.',
-    };
-  } else if (values.body.length > 300) {
+  if (values.body.length > 300) {
     errors.body = {
       type: 'maxLength',
       message: 'Max length of body is 300 characters.',
@@ -86,76 +79,82 @@ export function TaskEditor({ TaskData }: { TaskData: TaskType | null }) {
     handleSubmit,
     formState: { errors },
     setValue,
-    control,
   } = useForm<TaskType>({ resolver });
 
-  const [startTime, setStartTime] = useState<string>('');
-  const [endTime, setEndTime] = useState<string>('');
+  const { current_edit_task_id } = useNavigationStore();
+  const { updateTask } = useTasksStore();
+
+  const onSubmit: SubmitHandler<TaskType> = async (data) => {
+    if (current_edit_task_id) {
+      const response = fetch('');
+      data.id = current_edit_task_id;
+      updateTask(data,current_edit_task_id);
+    }
+  };
 
   useEffect(() => {
     if (TaskData) {
       setValue('title', TaskData.title);
       setValue('body', TaskData.body);
-      setStartTime(formatDateString(new Date(TaskData.time.startTime)));
-      setEndTime(formatDateString(new Date(TaskData.time.endTime)));
+      // setValue("time.startTime",new Date(TaskData.time.startTime))
+      // setStartTime(formatDateString(new Date(TaskData.time.startTime)));
+      // setEndTime(formatDateString(new Date(TaskData.time.endTime)));
     }
   }, [TaskData, setValue]);
 
   return (
     <>
-    {TaskData && 
-      <div className="task-editor-container">
-        <form onSubmit={(e) => console.log("form-onsubmit",e)}>
-          <input
-            {...register('title')}
-            placeholder="Task Title"
-            className="task-title"
-          />
-          {errors?.title && (
-            <span className="error-message">*{errors.title.message}</span>
-          )}
-          <textarea
-            id="body"
-            {...register('body')}
-            placeholder="Task Body"
-
-            className="task-body"
-          />
-          {errors?.body && (
-            <span className="error-message">*{errors.body.message}</span>
-          )}
-          <div className="time-slot-container">
+      {TaskData && (
+        <div className="task-editor-container">
+          <form onSubmit={handleSubmit(onSubmit)}>
             <input
-              className="time-slot-selector"
-              {...register(`time.startTime`)}
-              value={startTime}
-              type="datetime-local"
+              {...register('title')}
+              placeholder="Task Title"
+              className="task-title"
             />
-            {errors?.time?.startTime && (
-              <span className="error-message">
-                *{errors.time?.startTime?.message}
-              </span>
+            {errors?.title && (
+              <span className="error-message">*{errors.title.message}</span>
             )}
-            <span className="time-slot-separator">-</span>
+            <textarea
+              id="body"
+              {...register('body')}
+              placeholder="Task Body"
+              className="task-body"
+            />
+            {errors?.body && (
+              <span className="error-message">*{errors.body.message}</span>
+            )}
+            <div className="time-slot-container">
+              <input
+                className="time-slot-selector"
+                {...register(`time.startTime`)}
+                type="datetime-local"
+              />
+              {errors?.time?.startTime && (
+                <span className="error-message">
+                  *{errors.time?.startTime?.message}
+                </span>
+              )}
+              <span className="time-slot-separator">-</span>
+              <input
+                className="time-slot-selector"
+                {...register(`time.endTime`)}
+                type="datetime-local"
+              />
+              {errors?.time?.endTime && (
+                <span className="error-message">
+                  *{errors?.time.endTime?.message}
+                </span>
+              )}
+            </div>
             <input
-              className="time-slot-selector"
-              {...register(`time.endTime`)}
-              value={endTime}
-              type="datetime-local"
+              type="submit"
+              onSubmit={(e) => console.log('submitting form', e)}
             />
-            {errors?.time?.endTime && (
-              <span className="error-message">
-                *{errors?.time.endTime?.message}
-              </span>
-            )}
-          </div>
-          <input type="submit" onSubmit={(e) => console.log("submitting form",e) }/>
-        </form>
-      </div>
-    }
-    {!TaskData && 
-      <p>Select a task to edit</p>
-    }
+          </form>
+        </div>
+      )}
+      {!TaskData && <p>Select a task to edit</p>}
     </>
   );
 }
