@@ -1,7 +1,0 @@
-.header-bar-container{
-    align-self: center;
-    display: flex;
-    flex-direction: rows;
-    width: 90%;
-    justify-content: space-between;
-}

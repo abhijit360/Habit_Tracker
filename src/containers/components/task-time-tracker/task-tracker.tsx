@@ -39,7 +39,6 @@ export function TaskTracker() {
       {
         current_task_id != null ?
         <div className="time-tracker-container">
-          <HeaderBar />
           <div
             style={{
               display: 'flex',

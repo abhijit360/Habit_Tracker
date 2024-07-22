@@ -8,8 +8,8 @@ import playIcon from '../../../assets/img/play.svg';
 import { useNavigationStore } from '../../../../stores/navigationStore';
 import { useErrorStore } from '../../../../stores/errorStore';
 
-export function Task({ id, title, body, time, state }: TaskType) {
-  const {updateCurrentTask, updateNavigation, updateCurrentEditTask, current_task_id} = useNavigationStore()
+export function Task({ id, title, body, time, state , calendarId}: TaskType) {
+  const {updateCurrentTask, updateNavigation, updateCurrentEditTask} = useNavigationStore()
   const {setError} = useErrorStore()
   function formatTime(date: Date) {
     const hours = date.getUTCHours();

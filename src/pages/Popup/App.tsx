@@ -95,7 +95,7 @@ function App() {
             back
           </button>
         </div>
-        <TaskHistory />
+        {/* <TaskHistory /> */}
         {current_navigation_state === 'Login' ? (
           <LogIn />
         ) : current_navigation_state === 'TaskDisplay' ? (

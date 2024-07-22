@@ -106,8 +106,8 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
               style={{ backgroundColor: 'white' }}
               className="preliminary-task-display"
             >
-              <p style={{ color: 'black' }}>{task.title}</p>
-              <p style={{ color: 'black' }}>
+              <p style={{ color: 'black' }} className='task-tite'>{task.title}</p>
+              <p style={{ color: 'black' }} className='task-date'>
                 {task.time.startTime.toString()} -{' '}
                 {task.time.endTime.toString()}
               </p>
