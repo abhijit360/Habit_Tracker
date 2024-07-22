@@ -4,6 +4,7 @@ import './task-display.css';
 import addIcon from '../../../assets/img/add.svg';
 import { useTasksStore } from '../../../../stores/taskStore';
 import { useNavigationStore } from '../../../../stores/navigationStore'; 
+import {Input} from "@"
 
 export function TaskDisplay() {
   const { tasks } = useTasksStore();
