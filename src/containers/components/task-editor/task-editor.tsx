@@ -158,11 +158,6 @@ export function TaskEditor({
 
   return (
     <>
-      {state === 'add' && (
-        <>
-          <p>This is where the calendarSelect query takes place</p>
-        </>
-      )}
       {TaskData && (
         <div className="task-editor-container">
           <form onSubmit={handleSubmit(onSubmit)}>

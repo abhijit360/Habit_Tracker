@@ -101,9 +101,9 @@ function App() {
         ) : current_navigation_state === 'TaskDisplay' ? (
           <TaskDisplay />
         ) : current_navigation_state === 'TaskEdit' ? (
-          <TaskEditor TaskData={current_edit_task_id ? tasks.filter((task) => task.id === current_edit_task_id )[0] : null} />
+          <TaskEditor TaskData={current_edit_task_id ? tasks.filter((task) => task.id === current_edit_task_id )[0] : null} state={"edit"}/>
         ) : current_navigation_state === 'TaskAdd' ? (
-          <p>coming soon</p>
+          <TaskEditor TaskData={{} as TaskType} state={"add"}/>
         ) : (
           <TaskTracker />
         )}
