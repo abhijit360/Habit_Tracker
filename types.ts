@@ -1,5 +1,6 @@
 export type TaskType = {
     id: string;
+    calendarId: string;
     title: string;
     body: string;
     time: { startTime: Date; endTime: Date };

@@ -15,6 +15,7 @@ interface DisplayCalendarProps {
 export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
   const { updateNavigation } = useNavigationStore();
   const { tasks, append, remove } = useTasksStore();
+  
   async function handleCalendarSelect(e: React.MouseEvent) {
     const target = e.target as HTMLInputElement;
     const calendarId = target.value;
@@ -45,8 +46,9 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
     events.forEach((event) => {
       const newTask = {} as TaskType;
       newTask.title = event.summary;
-      newTask.id = window.crypto.randomUUID();
+      newTask.id = event.id;
       newTask.body = event.description;
+      newTask.calendarId = calendarId;
       newTask.state = 'new';
       newTask.time = {
         startTime: new Date(event.start.dateTime),
@@ -105,10 +107,6 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
               className="preliminary-task-display"
             >
               <p style={{ color: 'black' }}>{task.title}</p>
-              {/* <p style={{ color: 'black' }}>
-                {task.time.startTime.toISOString()} -{' '}
-                {task.time.endTime.toISOString()}
-              </p> */}
               <p style={{ color: 'black' }}>
                 {task.time.startTime.toString()} -{' '}
                 {task.time.endTime.toString()}
