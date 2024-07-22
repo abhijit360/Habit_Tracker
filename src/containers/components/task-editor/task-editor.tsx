@@ -73,7 +73,13 @@ function formatDateString(date: Date): string {
   );
 }
 
-export function TaskEditor({ TaskData }: { TaskData: TaskType | null }) {
+export function TaskEditor({
+  TaskData,
+  state,
+}: {
+  TaskData: TaskType | null;
+  state: 'add' | 'edit';
+}) {
   const {
     register,
     handleSubmit,
@@ -85,25 +91,78 @@ export function TaskEditor({ TaskData }: { TaskData: TaskType | null }) {
   const { updateTask } = useTasksStore();
 
   const onSubmit: SubmitHandler<TaskType> = async (data) => {
-    if (current_edit_task_id) {
-      const response = fetch('');
-      data.id = current_edit_task_id;
-      updateTask(data,current_edit_task_id);
+    const auth_token = await chrome.storage.session.get(
+      'lockIn-curr-google-token'
+    );
+    if (state === 'edit') {
+      if (current_edit_task_id) {
+        const response = await fetch(
+          `https://www.googleapis.com/calendar/v3/calendars/${TaskData?.calendarId}/events/${TaskData?.id}`,
+          {
+            method: 'POST',
+            body: JSON.stringify({
+              start: {
+                date: data.time.startTime,
+                dateTime: data.time.startTime,
+              },
+              end: {
+                date: data.time.endTime,
+                dateTime: data.time.endTime,
+              },
+            }),
+            headers: {
+              authorization: `bearer ${auth_token}`,
+            },
+          }
+        );
+        if (response.ok) {
+          data.id = current_edit_task_id;
+          updateTask(data, current_edit_task_id);
+        }
+      }
+    } else {
+      const response = await fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/${TaskData?.calendarId}/events/`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            summary: data.title,
+            description : data.body,
+            start: {
+              date: data.time.startTime,
+              dateTime: data.time.startTime,
+            },
+            end: {
+              date: data.time.endTime,
+              dateTime: data.time.endTime,
+            },
+          }),
+          headers: {
+            authorization: `bearer ${auth_token}`,
+          },
+        }
+      );
+
+      if(response.ok){
+        console.log("created", await response.json())
+      }
     }
   };
 
   useEffect(() => {
-    if (TaskData) {
+    if (TaskData && state === 'edit') {
       setValue('title', TaskData.title);
       setValue('body', TaskData.body);
-      // setValue("time.startTime",new Date(TaskData.time.startTime))
-      // setStartTime(formatDateString(new Date(TaskData.time.startTime)));
-      // setEndTime(formatDateString(new Date(TaskData.time.endTime)));
     }
-  }, [TaskData, setValue]);
+  }, [TaskData, setValue, state]);
 
   return (
     <>
+      {state === 'add' && (
+        <>
+          <p>This is where the calendarSelect query takes place</p>
+        </>
+      )}
       {TaskData && (
         <div className="task-editor-container">
           <form onSubmit={handleSubmit(onSubmit)}>
