@@ -4,21 +4,24 @@ import type { Page } from '../types';
 interface NavigationState {
   prev_navigation_states: Page[];
   current_navigation_state: Page;
+  current_task_id : string | null;
+  current_edit_task_id: string | null;
   updateNavigation: (page: Page) => void;
+  updateCurrentTask: (taskId : string) => void;
+  updateCurrentEditTask: (taskId: string) => void;
   revertToPreviousState: () => void;
 }
 
 export const useNavigationStore = create<NavigationState>((set) => ({
   prev_navigation_states: [] as Page[],
+  current_task_id: null,
+  current_edit_task_id: null,
   current_navigation_state: 'Login',
   updateNavigation: (page) => {
     set((state) => ({
       ...state,
       current_navigation_state: page,
-      prev_navigation_states:
-        state.prev_navigation_states.length >= 5
-          ? [page, ...state.prev_navigation_states.slice(0, 4)]
-          : [page, ...state.prev_navigation_states],
+      prev_navigation_states: state.prev_navigation_states.length >= 5 ? [page, ...state.prev_navigation_states.slice(0, 4)] : [page, ...state.prev_navigation_states]
     }));
   },
   revertToPreviousState: () => {
@@ -32,4 +35,12 @@ export const useNavigationStore = create<NavigationState>((set) => ({
       };
     });
   },
+  updateCurrentTask: (taskId) => {set((state) => ({
+    ...state,
+    current_task_id: taskId
+  }))},
+  updateCurrentEditTask: (taskId) => {set((state) => ({
+    ...state,
+    current_edit_task_id: taskId
+  }))},
 }));

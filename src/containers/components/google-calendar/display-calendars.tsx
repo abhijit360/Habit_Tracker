@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   GoogleCalendarEvent,
   GoogleCalendarEventListing,
@@ -12,14 +12,10 @@ interface DisplayCalendarProps {
   CalendarList: GoogleCalendarListing[];
 }
 
-// function handleCalendarSelect(e: React.ChangeEvent) {
-//   const target = e.target as HTMLInputElement;
-//   target.disabled = true; // this should be reset by using the calendar.id
-// }
-
 export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
   const { updateNavigation } = useNavigationStore();
   const { tasks, append, remove } = useTasksStore();
+  
   async function handleCalendarSelect(e: React.MouseEvent) {
     const target = e.target as HTMLInputElement;
     const calendarId = target.value;
@@ -50,7 +46,9 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
     events.forEach((event) => {
       const newTask = {} as TaskType;
       newTask.title = event.summary;
-      newTask.id = window.crypto.randomUUID();
+      newTask.id = event.id;
+      newTask.body = event.description;
+      newTask.calendarId = calendarId;
       newTask.state = 'new';
       newTask.time = {
         startTime: new Date(event.start.dateTime),
@@ -59,6 +57,26 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
       append(newTask);
     });
   }
+
+  async function handleTaskStateCreation() {
+    await chrome.storage.session.set({ current_task_state: JSON.stringify(tasks) });
+    updateNavigation('TaskDisplay');
+  }
+
+  async function checkExistingTaskState() {
+    const response = await chrome.storage.session.get('current_task_state');
+    if (response['current_task_state']) {
+      console.log('stored tasks:', response['current_task_state']);
+      const val: TaskType[] = JSON.parse(response['current_task_state']);
+      val.forEach((task: TaskType) => append(task));
+      val.forEach((task) => console.log('individual task', task.time.endTime));
+    }
+  }
+
+  useEffect(() => {
+    checkExistingTaskState();
+  }, []);
+
   console.log('tasks', tasks);
   return (
     <div className="calendar-container">
@@ -68,6 +86,7 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
           <>
             <label>
               <input
+                key={index}
                 type="radio"
                 name="calendar"
                 value={calendar.id}
@@ -89,15 +108,15 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
             >
               <p style={{ color: 'black' }}>{task.title}</p>
               <p style={{ color: 'black' }}>
-                {task.time.startTime.toISOString()} -{' '}
-                {task.time.endTime.toISOString()}
+                {task.time.startTime.toString()} -{' '}
+                {task.time.endTime.toString()}
               </p>
               <button onClick={() => remove(task.id)}>remove</button>
             </div>
           </>
         ))}
       </div>
-      <button onClick={() => updateNavigation('TaskDisplay')}>
+      <button onClick={() => handleTaskStateCreation()}>
         Continue to track
       </button>
     </div>

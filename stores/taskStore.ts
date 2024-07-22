@@ -9,6 +9,7 @@ interface TasksState {
     id: string,
     state: 'completed' | 'in-progress' | 'new'
   ) => void;
+  updateTask: (task : TaskType, task_id: string) => void;
 }
 
 export const useTasksStore = create<TasksState>((set) => ({
@@ -33,4 +34,5 @@ export const useTasksStore = create<TasksState>((set) => ({
           : task
       ),
     })),
+   updateTask: (newTask, task_id) => set((state) => ({tasks: state.tasks.map((task) => task.id === task_id ? newTask : task)}))
 }));

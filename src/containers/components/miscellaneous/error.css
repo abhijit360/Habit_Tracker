@@ -1,0 +1,34 @@
+.error-container{
+    display: inline-flex;
+    flex-direction: row;
+    border-radius: 15px;
+    padding: 0px 3px;
+    gap: 10px;
+    background-color: rgb(231, 237, 247);
+    opacity: 0.85;
+    z-index: 1000;
+    align-items: center;
+    position: relative;
+    top: 10px;
+    right: -25px; 
+    animation: render;
+    animation-duration: 1s;
+}
+
+.error-icon{
+    width: 24px;
+    height: 24px;
+}
+
+.error-text{
+    font-size:medium;
+    font-weight: bold;
+    color: black;
+}
+
+@keyframes render {
+    50% {
+      transform:
+        translate(-100px, 0px)
+    }
+  }

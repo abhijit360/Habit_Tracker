@@ -14,7 +14,7 @@ export function TaskDisplay() {
             <Task
               id={task.id}
               key={task.id}
-              times={task.times}
+              time={task.time}
               state={task.state}
               title={task.title}
               body={task.body}

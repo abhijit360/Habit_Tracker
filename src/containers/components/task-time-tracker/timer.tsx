@@ -3,16 +3,25 @@ import './timer.css';
 import pauseIcon from '../../../assets/img/pause.svg';
 import playIcon from '../../../assets/img/play.svg';
 import deleteIcon from '../../../assets/img/delete.svg';
+import { useNavigationStore } from '../../../../stores/navigationStore';
 
 interface TimerProps {
   hours: number;
   minutes: number;
   seconds: number;
   started: boolean;
+  updateTaskTime: (time: { h: number; m: number; s: number }) => void;
 }
 
-export function Timer({ hours, minutes, seconds, started }: TimerProps) {
+export function Timer({
+  hours,
+  minutes,
+  seconds,
+  started,
+  updateTaskTime,
+}: TimerProps) {
   const [toggleIcon, setToggleIcon] = useState<boolean>(started);
+  const { current_task_id } = useNavigationStore();
   const [currentTime, setCurrentTime] = useState<{
     h: number;
     m: number;
@@ -21,34 +30,34 @@ export function Timer({ hours, minutes, seconds, started }: TimerProps) {
   const [firstCounter, setFirstCounter] = useState<number>(0);
 
   async function checkForExistingCounter() {
-    console.log("checking if val exists")
+    console.log('checking if val exists');
     const val = await chrome.storage.session.get('timer-active-key');
-    const time = await chrome.storage.session.get("current-time");
-    const state = await chrome.storage.session.get("timer-state");
-    console.log("values received", val)
-    console.log("time received", time)
-    console.log("state received", state)
-    if (val["timer-active-key"]) {
+    const time = await chrome.storage.session.get('current-time');
+    const state = await chrome.storage.session.get('timer-state');
+    console.log('values received', val);
+    console.log('time received', time);
+    console.log('state received', state);
+    if (val['timer-active-key']) {
       setFirstCounter(1);
     }
-    if(time["current-time"]){
-      setCurrentTime(time["current-time"]);
+    if (time['current-time']) {
+      setCurrentTime(time['current-time']);
     }
-    if(state["timer-state"]){
-      if (state["timer-state"] === "paused"){
-        setToggleIcon(false)
-      }else{
-        setToggleIcon(true)
+    if (state['timer-state']) {
+      if (state['timer-state'] === 'paused') {
+        setToggleIcon(false);
+      } else {
+        setToggleIcon(true);
       }
     }
   }
 
   // useEffect(() =>{
   //   checkForExistingCounter();
-  // },[toggleIcon]) 
+  // },[toggleIcon])
 
   useEffect(() => {
-    checkForExistingCounter()
+    checkForExistingCounter();
     chrome.runtime.onMessage.addListener(function (
       request,
       sender,
@@ -87,6 +96,7 @@ export function Timer({ hours, minutes, seconds, started }: TimerProps) {
       });
       console.log('resume response', response);
     }
+    await chrome.storage.session.set({ 'current-task-id': current_task_id });
   }
 
   async function deleteTimerHandler() {
@@ -95,15 +105,15 @@ export function Timer({ hours, minutes, seconds, started }: TimerProps) {
     const response = await chrome.runtime.sendMessage({
       type: 'end-timer',
     });
-    console.log("deleting timer storage", response)
-    
+    console.log('deleting timer storage', response);
+    await chrome.storage.session.set({ 'current-task-id': null });
   }
 
   async function pauseHandler() {
-    console.log('test2');
     setToggleIcon((prev) => !prev);
     const response = await chrome.runtime.sendMessage({ type: 'pause-timer' });
     console.log('pause response', response);
+    //  update the time here
   }
 
   return (

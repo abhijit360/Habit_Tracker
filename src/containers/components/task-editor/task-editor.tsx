@@ -1,63 +1,56 @@
-import React from "react";
-import "./task-editor.css";
-import { useForm, Resolver, useFieldArray } from "react-hook-form";
-import type { TaskType } from "../../../../types";
-import deleteIcon from "../../../assets/img/delete.svg"
+import React, { useState, useEffect } from 'react';
+import './task-editor.css';
+import { useForm, Resolver, SubmitHandler } from 'react-hook-form';
+import type { TaskType } from '../../../../types';
+import { useNavigationStore } from '../../../../stores/navigationStore';
+import { useTasksStore } from '../../../../stores/taskStore';
 
 const resolver: Resolver<TaskType> = async (values) => {
   const errors: any = {};
   if (!values.title) {
     errors.title = {
-      type: "required",
-      message: "Title is required.",
+      type: 'required',
+      message: 'Title is required.',
     };
   } else if (values.title.length > 25) {
     errors.title = {
-      type: "maxLength",
-      message: "Max length of title is 25 characters.",
+      type: 'maxLength',
+      message: 'Max length of title is 25 characters.',
     };
   }
 
-  if (!values.body) {
+  if (values.body.length > 300) {
     errors.body = {
-      type: "required",
-      message: "Body field is required.",
-    };
-  } else if (values.body.length > 300) {
-    errors.body = {
-      type: "maxLength",
-      message: "Max length of body is 300 characters.",
+      type: 'maxLength',
+      message: 'Max length of body is 300 characters.',
     };
   }
 
-  values.times.forEach((time, index) => {
-    if (!time.startTime) {
-      errors.times = errors.times || [];
-      errors.times[index] = errors.times[index] || {};
-      errors.times[index].startTime = {
-        type: "required",
-        message: "Start time is required.",
+  if (values.time) {
+    if (!values.time.startTime) {
+      errors.times.startTime = {
+        type: 'required',
+        message: 'Start time is required.',
       };
     }
 
-    if (!time.endTime) {
-      errors.times = errors.times || [];
-      errors.times[index] = errors.times[index] || {};
-      errors.times[index].endTime = {
-        type: "required",
-        message: "End time is required.",
+    if (!values.time.endTime) {
+      errors.times.endTime = {
+        type: 'required',
+        message: 'End time is required.',
       };
     }
 
-    if (new Date(time.endTime).getTime() < new Date(time.startTime).getTime()) {
-      errors.times = errors.times || [];
-      errors.times[index] = errors.times[index] || {};
-      errors.times[index].endTime = {
-        type: "timeError",
+    if (
+      new Date(values.time.endTime).getTime() <
+      new Date(values.time.startTime).getTime()
+    ) {
+      errors.times.endTime = {
+        type: 'timeError',
         message: "End time can't be before the start time.",
       };
     }
-  });
+  }
 
   return {
     values: Object.keys(errors).length ? {} : values,
@@ -65,89 +58,157 @@ const resolver: Resolver<TaskType> = async (values) => {
   };
 };
 
-export function TaskEditor({ TaskData }: { TaskData: TaskType }) {
+function formatDateString(date: Date): string {
+  const pad = (number: number) => (number < 10 ? '0' : '') + number;
+  return (
+    date.getFullYear() +
+    '-' +
+    pad(date.getMonth() + 1) +
+    '-' +
+    pad(date.getDate()) +
+    'T' +
+    pad(date.getHours()) +
+    ':' +
+    pad(date.getMinutes())
+  );
+}
+
+export function TaskEditor({
+  TaskData,
+  state,
+}: {
+  TaskData: TaskType | null;
+  state: 'add' | 'edit';
+}) {
   const {
     register,
     handleSubmit,
     formState: { errors },
-    control,
+    setValue,
   } = useForm<TaskType>({ resolver });
-  const { fields, append, remove } = useFieldArray({
-    control,
-    name: "times",
-  });
-  const onSubmit = handleSubmit((data) => console.log(data));
+
+  const { current_edit_task_id } = useNavigationStore();
+  const { updateTask } = useTasksStore();
+
+  const onSubmit: SubmitHandler<TaskType> = async (data) => {
+    const auth_token = await chrome.storage.session.get(
+      'lockIn-curr-google-token'
+    );
+    if (state === 'edit') {
+      if (current_edit_task_id) {
+        const response = await fetch(
+          `https://www.googleapis.com/calendar/v3/calendars/${TaskData?.calendarId}/events/${TaskData?.id}`,
+          {
+            method: 'POST',
+            body: JSON.stringify({
+              start: {
+                date: data.time.startTime,
+                dateTime: data.time.startTime,
+              },
+              end: {
+                date: data.time.endTime,
+                dateTime: data.time.endTime,
+              },
+            }),
+            headers: {
+              authorization: `bearer ${auth_token}`,
+            },
+          }
+        );
+        if (response.ok) {
+          data.id = current_edit_task_id;
+          updateTask(data, current_edit_task_id);
+        }
+      }
+    } else {
+      const response = await fetch(
+        `https://www.googleapis.com/calendar/v3/calendars/${TaskData?.calendarId}/events/`,
+        {
+          method: 'POST',
+          body: JSON.stringify({
+            summary: data.title,
+            description : data.body,
+            start: {
+              date: data.time.startTime,
+              dateTime: data.time.startTime,
+            },
+            end: {
+              date: data.time.endTime,
+              dateTime: data.time.endTime,
+            },
+          }),
+          headers: {
+            authorization: `bearer ${auth_token}`,
+          },
+        }
+      );
+
+      if(response.ok){
+        console.log("created", await response.json())
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (TaskData && state === 'edit') {
+      setValue('title', TaskData.title);
+      setValue('body', TaskData.body);
+    }
+  }, [TaskData, setValue, state]);
+
   return (
     <>
-      <div className="task-editor-container">
-        <form onSubmit={onSubmit}>
-          <input
-            {...register("title")}
-            placeholder="Task Title"
-            className="task-title"
-          />
-          {errors?.title && (
-            <span className="error-message">*{errors.title.message}</span>
-          )}
-          <textarea
-            id="body"
-            {...register("body")}
-            placeholder="Task Body"
-            className="task-body"
-          />
-          {errors?.body && (
-            <span className="error-message">*{errors.body.message}</span>
-          )}
-
-          {fields.map((field, index) => (
-            <>
-              <div className="time-slot-container" key={field.id}>
-                <input
-                  key={field.id}
-                  className="time-slot-selector"
-                  {...register(`times.${index}.startTime`)}
-                  type="datetime-local"
-                />
-                {errors?.times?.[index]?.startTime && (
-                  <span className="error-message">
-                    *{errors.times[index]?.startTime?.message}
-                  </span>
-                )}
-                <span className="time-slot-separator">-</span>
-                <input
-                  key={field.id}
-                  className="time-slot-selector"
-                  {...register(`times.${index}.endTime`)}
-                  type="datetime-local"
-                />
-                {errors?.times?.[index]?.endTime&& (
-                  <span className="error-message">
-                    *{errors?.times?.[index]?.endTime?.message}
-                  </span>
-                )}
-                <img
-                  src={deleteIcon}
-                  alt="delete time slot"
-                  className="time-slot-delete"
-                  onClick={() => remove(index)}
-                />
-              
-              </div>
-            </>
-          ))}
-          <button
-            onClick={() =>
-              append({
-                startTime: new Date(Date.now()),
-                endTime: new Date(Date.now() + 60 * 60 * 1000), //1 hour after startTime
-              })
-            }
-          >
-            Add Time slot
-          </button>
-          <input type="submit" />
-        </form>
-      </div>
+      {TaskData && (
+        <div className="task-editor-container">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <input
+              {...register('title')}
+              placeholder="Task Title"
+              className="task-title"
+            />
+            {errors?.title && (
+              <span className="error-message">*{errors.title.message}</span>
+            )}
+            <textarea
+              id="body"
+              {...register('body')}
+              placeholder="Task Body"
+              className="task-body"
+            />
+            {errors?.body && (
+              <span className="error-message">*{errors.body.message}</span>
+            )}
+            <div className="time-slot-container">
+              <input
+                className="time-slot-selector"
+                {...register(`time.startTime`)}
+                type="datetime-local"
+              />
+              {errors?.time?.startTime && (
+                <span className="error-message">
+                  *{errors.time?.startTime?.message}
+                </span>
+              )}
+              <span className="time-slot-separator">-</span>
+              <input
+                className="time-slot-selector"
+                {...register(`time.endTime`)}
+                type="datetime-local"
+              />
+              {errors?.time?.endTime && (
+                <span className="error-message">
+                  *{errors?.time.endTime?.message}
+                </span>
+              )}
+            </div>
+            <input
+              type="submit"
+              onSubmit={(e) => console.log('submitting form', e)}
+            />
+          </form>
+        </div>
+      )}
+      {!TaskData && <p>Select a task to edit</p>}
     </>
   );
 }
