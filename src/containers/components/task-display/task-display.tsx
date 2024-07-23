@@ -42,6 +42,7 @@ export function TaskDisplay() {
             </p>
           </span>
           <input className="task-display-searchbar" placeholder='search' onChange={handleSearch}/>
+          
           <img
             src={addIcon}
             className="task-display-add-icon"

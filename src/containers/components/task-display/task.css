@@ -38,3 +38,10 @@
 .menu-button:hover{
     font-weight:600;
 }
+
+.task-calendar{
+    border: 1px grey solid;
+    border-radius: 5px;
+    font-size: small;
+    padding: 2px 4px;
+}
