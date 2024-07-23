@@ -48,6 +48,12 @@ export function LogIn() {
             await chrome.storage.session.set({
               'lockIn-curr-google-token': token,
             });
+            const profile_data = await (
+              await fetch(
+                `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${token}`
+              )
+            ).json();
+            setUserProfile(profile_data);
             setTokenAvailability(true);
           }
         }
