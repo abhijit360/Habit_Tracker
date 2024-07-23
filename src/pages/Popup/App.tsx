@@ -57,7 +57,7 @@ function App() {
             value={'Login'}
             onClick={incrementNavigation}
           >
-            Login
+            Home
           </button>
           <button
             className="nav-button"

@@ -1,0 +1,25 @@
+.calendar-container{
+    
+}
+.calendar-title{
+    font-size: small;
+}
+
+.calendar-events-container{
+    width: 100%;
+    background-color: white;
+    margin:10px;
+
+}
+
+.calendar-listing{
+    display: flex;
+    flex-direction: column;
+
+}
+.preliminary-task-display{
+    font-size: medium;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
