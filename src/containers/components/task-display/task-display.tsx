@@ -3,12 +3,13 @@ import { Task } from './task';
 import './task-display.css';
 import addIcon from '../../../assets/img/add.svg';
 import { useTasksStore } from '../../../../stores/taskStore';
-import { useNavigationStore } from '../../../../stores/navigationStore'; 
-import {Input} from "@"
+import { useNavigationStore } from '../../../../stores/navigationStore';
+import { Input } from '../../shadcn components/input';
+
 
 export function TaskDisplay() {
   const { tasks } = useTasksStore();
-  const {updateNavigation} = useNavigationStore()
+  const { updateNavigation } = useNavigationStore();
 
   function getFormattedDate(date: Date) {
     var year = date.getFullYear();
@@ -31,6 +32,7 @@ export function TaskDisplay() {
               {getFormattedDate(new Date(Date.now()))}
             </p>
           </span>
+          <Input placeholder="search" />
           <img
             src={addIcon}
             style={{
