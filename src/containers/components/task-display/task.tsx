@@ -4,6 +4,7 @@ import { TaskType } from '../../../../types';
 import { useTasksStore } from '../../../../stores/taskStore';
 import { useNavigationStore } from '../../../../stores/navigationStore';
 import { useErrorStore } from '../../../../stores/errorStore';
+import { Menu } from './task-menu';
 
 export function Task({ id, title, body, time, state, calendarId }: TaskType) {
   const { updateCurrentTask, updateNavigation, updateCurrentEditTask, current_edit_task_id, current_task_id } =
@@ -93,7 +94,11 @@ export function Task({ id, title, body, time, state, calendarId }: TaskType) {
           <p className="task-date">{timeToString(time_passed)}</p>
         )}
         <span className=' justify-center align-middle self-center'>
-          {/* @ */}
+          <Menu>
+            <span className="menu-button" onClick={() => handleStartTask()}>Edit</span>
+            <span className="menu-button" onClick={() => handleEditTask()}>Start</span>
+            <span className="menu-button" onClick={() => remove(id)}>Delete</span>
+          </Menu>
         </span>
       </div>
     </>
