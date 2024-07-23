@@ -4,12 +4,6 @@ import { TaskType } from '../../../../types';
 import { useTasksStore } from '../../../../stores/taskStore';
 import { useNavigationStore } from '../../../../stores/navigationStore';
 import { useErrorStore } from '../../../../stores/errorStore';
-import { Checkbox } from '../../shadcn components/checkbox';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '../../shadcn components/popover';
 
 export function Task({ id, title, body, time, state, calendarId }: TaskType) {
   const { updateCurrentTask, updateNavigation, updateCurrentEditTask, current_edit_task_id, current_task_id } =

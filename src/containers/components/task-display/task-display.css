@@ -25,6 +25,21 @@
     
 }
 
+.task-display-searchbar{
+  border: solid black 0.5px;
+  padding: 5px 5px;
+  border-radius: 15px;
+}
+
+.task-display-add-icon{
+  cursor: 'pointer';
+  border-radius: 0.5;
+  width: 24px;
+  height: 24px;
+  /* justify-self: center; */
+  align-self: center;
+}
+
 .time-title{
   padding: 0;
   margin: 0;

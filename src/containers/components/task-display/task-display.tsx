@@ -32,16 +32,10 @@ export function TaskDisplay() {
               {getFormattedDate(new Date(Date.now()))}
             </p>
           </span>
-          <Input placeholder="search" />
+          <input className="task-display-searchbar" placeholder='search'/>
           <img
             src={addIcon}
-            style={{
-              // backgroundColor: "grey",
-              cursor: 'pointer',
-              borderRadius: '50%',
-              width: '24px',
-              height: '24px',
-            }}
+            className="task-display-add-icon"
             alt="add task"
             onClick={() => updateNavigation('TaskAdd')}
           />
