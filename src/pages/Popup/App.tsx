@@ -51,7 +51,6 @@ function App() {
     <div className="App">
       <header className="App-header">
         {error && <Error error={error} />}
-        <p>current navigation: {current_navigation_state}</p>
         <div className="nav-container">
           <button
             className="nav-button"
@@ -66,33 +65,6 @@ function App() {
             onClick={incrementNavigation}
           >
             Task Display
-          </button>
-          <button
-            className="nav-button"
-            value={'TaskEdit'}
-            onClick={incrementNavigation}
-          >
-            Task Edit
-          </button>
-          <button
-            className="nav-button"
-            value={'TaskAdd'}
-            onClick={incrementNavigation}
-          >
-            Task Add
-          </button>
-          <button
-            className="nav-button"
-            value={'TaskTimer'}
-            onClick={incrementNavigation}
-          >
-            Task Timer
-          </button>
-          <button
-            className="nav-button"
-            onClick={() => revertToPreviousState()}
-          >
-            back
           </button>
         </div>
         {/* <TaskHistory /> */}
