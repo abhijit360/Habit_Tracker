@@ -79,10 +79,10 @@ export function Task({ id, title, body, time, state, calendarId }: TaskType) {
   return (
     <>
       <div className="task-container">
-        <Checkbox
+        {/* <Checkbox
           checked={checkedState}
           onCheckedChange={() => setCheckedState((prev) => !prev)}
-        />
+        /> */}
         <p className="task-name">{title}</p>
         {state === 'new' ? (
           <p className="task-date">
@@ -93,18 +93,7 @@ export function Task({ id, title, body, time, state, calendarId }: TaskType) {
           <p className="task-date">{timeToString(time_passed)}</p>
         )}
         <span className=' justify-center align-middle self-center'>
-          <Popover>
-            <PopoverTrigger asChild>
-              <span className='text-[12px] font-bold'>...</span>
-            </PopoverTrigger>
-            <PopoverContent className="w-8">
-              <div className="bg-white pl-2 pr-2">
-                <button className="bg-red-500" onClick={() => handleEditTask()}>Edit</button>
-                <button onClick={() => handleStartTask()}>Start</button>
-                <button onClick={() => remove(id)}>Delete</button>
-              </div>
-            </PopoverContent>
-          </Popover>
+          {/* @ */}
         </span>
       </div>
     </>

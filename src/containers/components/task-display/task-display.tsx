@@ -1,15 +1,16 @@
-import React from 'react';
+import React, {HTMLInputTypeAttribute, useState} from 'react';
 import { Task } from './task';
 import './task-display.css';
 import addIcon from '../../../assets/img/add.svg';
 import { useTasksStore } from '../../../../stores/taskStore';
 import { useNavigationStore } from '../../../../stores/navigationStore';
 import { Input } from '../../shadcn components/input';
-
+import type { TaskType } from '../../../../types';
 
 export function TaskDisplay() {
   const { tasks } = useTasksStore();
   const { updateNavigation } = useNavigationStore();
+  const [filteredTask, setFilteredTasks] = useState<TaskType[]>(tasks)
 
   function getFormattedDate(date: Date) {
     var year = date.getFullYear();
@@ -22,6 +23,14 @@ export function TaskDisplay() {
 
     return month + '/' + day + '/' + year;
   }
+
+  function handleSearch(e: React.ChangeEvent){
+    const input = e.target as HTMLInputElement
+    const searchTerm = input.value
+    setFilteredTasks(tasks.filter((task) => task.title.toLowerCase().includes(searchTerm.toLowerCase())))
+  }
+
+
   return (
     <>
       <div className="task-display-container">
@@ -32,7 +41,7 @@ export function TaskDisplay() {
               {getFormattedDate(new Date(Date.now()))}
             </p>
           </span>
-          <input className="task-display-searchbar" placeholder='search'/>
+          <input className="task-display-searchbar" placeholder='search' onChange={handleSearch}/>
           <img
             src={addIcon}
             className="task-display-add-icon"
@@ -41,7 +50,7 @@ export function TaskDisplay() {
           />
         </div>
         <div className="task-display-body">
-          {tasks.map((task) => (
+          {filteredTask.map((task) => (
             <Task
               calendarId={task.calendarId}
               id={task.id}
