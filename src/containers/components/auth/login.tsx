@@ -2,23 +2,26 @@ import React, { useState, useEffect } from 'react';
 import type {
   GoogleUserObj,
   GoogleCalendarListing,
-  GoogleCalendarEventListing,
-  GoogleCalendarEvent,
-  TaskType,
+  CalendarStore
 } from '../../../../types';
 import { useTasksStore } from '../../../../stores/taskStore';
 import { DisplayCalendar } from '../google-calendar/display-calendars';
 import './login.css';
+import {useCalendarStore} from "../../../../stores/calendarStore"
 
 export function LogIn() {
   const [tokenAvailability, setTokenAvailability] = useState<boolean>(false);
+
   const [calendarListings, setCalendarListings] = useState<
     GoogleCalendarListing[]
   >([] as GoogleCalendarListing[]);
+
   const [userProfile, setUserProfile] = useState<GoogleUserObj>(
     {} as GoogleUserObj
   );
+
   const {clearTaskState} = useTasksStore()
+  const {setCalendars} = useCalendarStore()
 
   async function checkExistingToken() {
     const response = await chrome.storage.session.get(
@@ -86,7 +89,8 @@ export function LogIn() {
       return;
     }
     const data: any = await response.json();
-    const calendars: GoogleCalendarListing[] = data['items'];
+    const calendars: GoogleCalendarListing[] = data['items']; 
+    setCalendars(calendars.map((calendar) => ({calendarId: calendar.id, calendarName: calendar.summary}) ) as CalendarStore[])
     setCalendarListings(calendars);
   }
 

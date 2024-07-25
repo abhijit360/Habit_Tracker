@@ -4,6 +4,8 @@ import { useForm, Resolver, SubmitHandler } from 'react-hook-form';
 import type { TaskType } from '../../../../types';
 import { useNavigationStore } from '../../../../stores/navigationStore';
 import { useTasksStore } from '../../../../stores/taskStore';
+import { Task } from '../task-display/task';
+import { useCalendarStore } from '../../../../stores/calendarStore';
 
 const resolver: Resolver<TaskType> = async (values) => {
   const errors: any = {};
@@ -88,10 +90,14 @@ export function TaskEditor({
   } = useForm<TaskType>({ resolver });
 
   const { current_edit_task_id } = useNavigationStore();
-  const { updateTask } = useTasksStore();
+  const { updateTask, tasks } = useTasksStore();
+  const {calendars} = useCalendarStore()
+
+  const [calendarID, setCalendarID] = useState<string>("")
+  const [calendarError, setCalendarError] = useState<string>("")
 
   const onSubmit: SubmitHandler<TaskType> = async (data) => {
-    const auth_token = await chrome.storage.session.get(
+    const auth_obj= await chrome.storage.session.get(
       'lockIn-curr-google-token'
     );
     if (state === 'edit') {
@@ -111,7 +117,7 @@ export function TaskEditor({
               },
             }),
             headers: {
-              authorization: `bearer ${auth_token}`,
+              Authorization: `bearer ${auth_token}`,
             },
           }
         );
@@ -121,8 +127,26 @@ export function TaskEditor({
         }
       }
     } else {
+      console.log({
+        method: 'POST',
+        body: JSON.stringify({
+          summary: data.title,
+          description : data.body,
+          start: {
+            date: data.time.startTime,
+            dateTime: data.time.startTime,
+          },
+          end: {
+            date: data.time.endTime,
+            dateTime: data.time.endTime,
+          },
+        }),
+        headers: {
+          Authorization: `Bearer ${auth_obj['lockIn-curr-google-token']}`,
+        },
+      })
       const response = await fetch(
-        `https://www.googleapis.com/calendar/v3/calendars/${TaskData?.calendarId}/events/`,
+        `https://www.googleapis.com/calendar/v3/calendars/${calendarID}/events/`,
         {
           method: 'POST',
           body: JSON.stringify({
@@ -138,7 +162,7 @@ export function TaskEditor({
             },
           }),
           headers: {
-            authorization: `bearer ${auth_token}`,
+            authorization: `bearer ${auth_obj['lockIn-curr-google-token']}`,
           },
         }
       );
@@ -156,8 +180,19 @@ export function TaskEditor({
     }
   }, [TaskData, setValue, state]);
 
+  function handleCalendarSelection(e: React.SyntheticEvent){
+    const target = e.currentTarget as HTMLOptionElement
+    console.log("calendarId- addTask", target.value)
+    setCalendarID(target.value)
+  }
+
   return (
     <>
+      {state === 'add' && 
+        <select onChange={handleCalendarSelection}>
+        {calendars.map((calendar) => <option value={calendar.calendarId}>{calendar.calendarName}</option>)}
+        </select>
+      }
       {TaskData && (
         <div className="task-editor-container">
           <form onSubmit={handleSubmit(onSubmit)}>

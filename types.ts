@@ -1,6 +1,7 @@
 export type TaskType = {
     id: string;
     calendarId: string;
+    calendarName: string;
     title: string;
     body: string;
     time: { startTime: Date; endTime: Date };
@@ -18,6 +19,11 @@ export type GoogleUserObj = {
 }
 
 export type Page = "Login" | "TaskDisplay" | "TaskEdit" | "TaskAdd" | "TaskTimer"
+
+export type CalendarStore = {
+  calendarId : string,
+  calendarName: string,
+}
 
 export type GoogleCalendarListing =  {
   "kind": string,

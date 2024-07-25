@@ -8,6 +8,7 @@ import {
 import './display-calendar.css';
 import { useTasksStore } from '../../../../stores/taskStore';
 import { useNavigationStore } from '../../../../stores/navigationStore';
+import { useCalendarStore } from '../../../../stores/calendarStore';
 interface DisplayCalendarProps {
   CalendarList: GoogleCalendarListing[];
 }
@@ -15,11 +16,12 @@ interface DisplayCalendarProps {
 export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
   const { updateNavigation } = useNavigationStore();
   const { tasks, append, remove } = useTasksStore();
+  const {calendars} = useCalendarStore()
 
   async function handleCalendarSelect(e: React.MouseEvent) {
     const target = e.target as HTMLInputElement;
     const calendarId = target.value;
-
+    const calendarName = calendars.filter((c) => c.calendarId === calendarId)[0]
     const tokenObj = await chrome.storage.session.get(
       'lockIn-curr-google-token'
     );
@@ -49,6 +51,7 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
       newTask.id = event.id;
       newTask.body = event.description;
       newTask.calendarId = calendarId;
+      newTask.calendarName = calendarName ? calendarName.calendarName : "";
       newTask.state = 'new';
       newTask.time = {
         startTime: new Date(event.start.dateTime),

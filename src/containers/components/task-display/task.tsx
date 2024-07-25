@@ -6,7 +6,7 @@ import { useNavigationStore } from '../../../../stores/navigationStore';
 import { useErrorStore } from '../../../../stores/errorStore';
 import { Menu } from './task-menu';
 
-export function Task({ id, title, body, time, state, calendarId }: TaskType) {
+export function Task({ id, title, body, calendarName, time, state, calendarId }: TaskType) {
   const { updateCurrentTask, updateNavigation, updateCurrentEditTask, current_edit_task_id, current_task_id } =
     useNavigationStore();
   const { setError } = useErrorStore();
