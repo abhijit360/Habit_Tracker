@@ -16,12 +16,14 @@ interface DisplayCalendarProps {
 export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
   const { updateNavigation } = useNavigationStore();
   const { tasks, append, remove } = useTasksStore();
-  const {calendars} = useCalendarStore()
+  const { calendars } = useCalendarStore();
 
   async function handleCalendarSelect(e: React.MouseEvent) {
     const target = e.target as HTMLInputElement;
     const calendarId = target.value;
-    const calendarName = calendars.filter((c) => c.calendarId === calendarId)[0]
+    const calendarName = calendars.filter(
+      (c) => c.calendarId === calendarId
+    )[0];
     const tokenObj = await chrome.storage.session.get(
       'lockIn-curr-google-token'
     );
@@ -51,7 +53,7 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
       newTask.id = event.id;
       newTask.body = event.description;
       newTask.calendarId = calendarId;
-      newTask.calendarName = calendarName ? calendarName.calendarName : "";
+      newTask.calendarName = calendarName ? calendarName.calendarName : '';
       newTask.state = 'new';
       newTask.time = {
         startTime: new Date(event.start.dateTime),
@@ -83,12 +85,19 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
   }
 
   async function checkExistingTaskState() {
-    const response = await chrome.storage.session.get('current_task_state');
-    if (response['current_task_state']) {
-      console.log('stored tasks:', response['current_task_state']);
-      const val: TaskType[] = JSON.parse(response['current_task_state']);
-      val.forEach((task: TaskType) => append(task));
-      val.forEach((task) => console.log('individual task', task.time.endTime));
+    const response = await chrome.storage.session.get(
+      'lockIn-curr-google-token'
+    );
+    if (response['lockIn-curr-google-token']) {
+      const response = await chrome.storage.session.get('current_task_state');
+      if (response['current_task_state']) {
+        console.log('stored tasks:', response['current_task_state']);
+        const val: TaskType[] = JSON.parse(response['current_task_state']);
+        val.forEach((task: TaskType) => append(task));
+        val.forEach((task) =>
+          console.log('individual task', task.time.endTime)
+        );
+      }
     }
   }
 
