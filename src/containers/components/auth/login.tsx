@@ -6,6 +6,7 @@ import type {
   GoogleCalendarEvent,
   TaskType,
 } from '../../../../types';
+import { useTasksStore } from '../../../../stores/taskStore';
 import { DisplayCalendar } from '../google-calendar/display-calendars';
 import './login.css';
 
@@ -17,6 +18,8 @@ export function LogIn() {
   const [userProfile, setUserProfile] = useState<GoogleUserObj>(
     {} as GoogleUserObj
   );
+  const {clearTaskState} = useTasksStore()
+
   async function checkExistingToken() {
     const response = await chrome.storage.session.get(
       'lockIn-curr-google-token'
@@ -87,10 +90,14 @@ export function LogIn() {
     setCalendarListings(calendars);
   }
 
-  function logoutHandler() {
-    chrome.storage.session.set({ 'lockIn-curr-google-token': null });
+  async function logoutHandler() {
+    console.log("logging out ?")
+    await chrome.storage.session.set({ 'lockIn-curr-google-token': null });
+    setCalendarListings([] as GoogleCalendarListing[])
     setUserProfile({} as GoogleUserObj);
+    clearTaskState()
     setTokenAvailability(false);
+    console.log("successfully logged out")
   }
 
   console.log(calendarListings);
@@ -100,7 +107,7 @@ export function LogIn() {
         <p className="login-form-description"></p>
         {!tokenAvailability ? (
           <>
-            <button className="user-auth-button" onClick={loginHandler}>
+            <button className="user-auth-button" onClick={(e) => loginHandler(e)}>
               Login
             </button>
           </>
@@ -110,7 +117,7 @@ export function LogIn() {
               <span>
                 <p className="user-name">Welcome {userProfile.given_name.charAt(0).toUpperCase()}{userProfile.given_name.slice(1)}</p>
               </span>
-              <button className="user-auth-button" onClick={logoutHandler}>
+              <button className="user-auth-button" onClick={() => logoutHandler()}>
                 LogOut
               </button>
             </div>

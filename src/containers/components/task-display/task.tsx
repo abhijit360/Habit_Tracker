@@ -85,7 +85,6 @@ export function Task({ id, title, body, time, state, calendarId }: TaskType) {
           onCheckedChange={() => setCheckedState((prev) => !prev)}
         /> */}
         <p className="task-name">{title.length > 15 ? `${title.slice(0,14)}...${calendarId.slice(calendarId.length-1)}`: title}</p>
-        <span className='task-calendar'>{calendarId.length > 10 ? `${calendarId.slice(0,5)}...${calendarId.slice(calendarId.length -1)}`: calendarId}</span>
         {state === 'new' ? (
           <p className="task-date">
             {formatDateString(new Date(time.startTime))} -{' '}
@@ -96,7 +95,7 @@ export function Task({ id, title, body, time, state, calendarId }: TaskType) {
         )}
         <span className=' justify-center align-middle self-center'>
           <Menu>
-            <span className="menu-button" onClick={() => handleStartTask()}>{current_task_id === id ? "Start" : "Track"}</span>
+            <span className="menu-button" onClick={() => handleStartTask()}>{current_task_id === id ? "Track" : "Start"}</span>
             <span className="menu-button" onClick={() => handleEditTask()}>Edit</span>
             <span className="menu-button" onClick={() => remove(id)}>Delete</span>
           </Menu>

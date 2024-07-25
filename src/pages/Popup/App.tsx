@@ -14,14 +14,12 @@ import { useTasksStore } from '../../../stores/taskStore';
 function App() {
   const {
     current_navigation_state,
-    current_task_id,
     current_edit_task_id,
     updateNavigation,
-    revertToPreviousState,
     updateCurrentTask,
   } = useNavigationStore();
   const { error, removeError } = useErrorStore();
-  const {tasks} = useTasksStore()
+  const {tasks, clearTaskState} = useTasksStore()
 
   function incrementNavigation(e: React.MouseEvent) {
     const target = e.target as HTMLButtonElement;
@@ -35,11 +33,21 @@ function App() {
   }, [error, removeError]);
 
   const checkForPeristingTaskState = useCallback(async () => {
+    const authToken = await chrome.storage.session.get('lockIn-curr-google-token');
+    if(!authToken['lockIn-curr-google-token']){
+      return 
+    }
     const task_id_obj = await chrome.storage.session.get('current-task-id');
     if (task_id_obj['current-task-id']) {
       updateCurrentTask(task_id_obj['current-task-id']);
     }
   },[updateCurrentTask]);
+
+  async function handleLogOut(){
+    await chrome.storage.session.set({ 'lockIn-curr-google-token': null });
+    clearTaskState()
+    updateNavigation("Login")
+  }
 
   useEffect(() => {
     checkForPeristingTaskState();
@@ -55,9 +63,9 @@ function App() {
           <button
             className="nav-button"
             value={'Login'}
-            onClick={incrementNavigation}
+            onClick={() => current_navigation_state === "Login" ? () => {} : handleLogOut()}
           >
-            Home
+            {current_navigation_state == "Login" ? "Home": "Logout" }
           </button>
           <button
             className="nav-button"
