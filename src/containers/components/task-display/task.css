@@ -26,6 +26,22 @@
     padding: 0;
     width: 24px;
     height: 24px;
-    cursor: pointer;
-    
+    cursor: pointer;   
+}
+
+.menu-button{
+    font-size:small;
+    font-weight: 300;
+    width: 45px;
+}
+
+.menu-button:hover{
+    font-weight:600;
+}
+
+.task-calendar{
+    border: 1px grey solid;
+    border-radius: 5px;
+    font-size: small;
+    padding: 2px 4px;
 }

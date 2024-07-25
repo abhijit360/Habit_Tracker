@@ -2,34 +2,40 @@ import React, { useState, useEffect } from 'react';
 import type {
   GoogleUserObj,
   GoogleCalendarListing,
-  GoogleCalendarEventListing,
-  GoogleCalendarEvent,
-  TaskType,
+  CalendarStore
 } from '../../../../types';
 import { useTasksStore } from '../../../../stores/taskStore';
 import { DisplayCalendar } from '../google-calendar/display-calendars';
+import './login.css';
+import {useCalendarStore} from "../../../../stores/calendarStore"
+
 export function LogIn() {
   const [tokenAvailability, setTokenAvailability] = useState<boolean>(false);
+
   const [calendarListings, setCalendarListings] = useState<
     GoogleCalendarListing[]
   >([] as GoogleCalendarListing[]);
+
   const [userProfile, setUserProfile] = useState<GoogleUserObj>(
     {} as GoogleUserObj
   );
-  const { tasks, append, remove, toggleCompletedState } = useTasksStore();
+
+  const {clearTaskState} = useTasksStore()
+  const {setCalendars} = useCalendarStore()
+
   async function checkExistingToken() {
     const response = await chrome.storage.session.get(
       'lockIn-curr-google-token'
     );
     if (response['lockIn-curr-google-token']) {
       console.log(response['lockIn-curr-google-token']);
-      setTokenAvailability(true);
       const profile_data = await (
         await fetch(
           `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${response['lockIn-curr-google-token']}`
         )
       ).json();
       setUserProfile(profile_data);
+      setTokenAvailability(true);
       getCalendars();
     }
   }
@@ -48,6 +54,12 @@ export function LogIn() {
             await chrome.storage.session.set({
               'lockIn-curr-google-token': token,
             });
+            const profile_data = await (
+              await fetch(
+                `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${token}`
+              )
+            ).json();
+            setUserProfile(profile_data);
             setTokenAvailability(true);
           }
         }
@@ -73,41 +85,50 @@ export function LogIn() {
     console.log('response?', response.ok);
     if (!response.ok) {
       setTokenAvailability(false);
-      await chrome.storage.session.set({'lockIn-curr-google-token': null});
+      await chrome.storage.session.set({ 'lockIn-curr-google-token': null });
       return;
     }
     const data: any = await response.json();
-    const calendars: GoogleCalendarListing[] = data['items'];
+    const calendars: GoogleCalendarListing[] = data['items']; 
+    setCalendars(calendars.map((calendar) => ({calendarId: calendar.id, calendarName: calendar.summary}) ) as CalendarStore[])
     setCalendarListings(calendars);
   }
 
-  function logoutHandler() {
-    chrome.storage.session.set({ 'lockIn-curr-google-token': null });
+  async function logoutHandler() {
+    console.log("logging out ?")
+    await chrome.storage.session.set({ 'lockIn-curr-google-token': null });
+    setCalendarListings([] as GoogleCalendarListing[])
     setUserProfile({} as GoogleUserObj);
+    clearTaskState()
     setTokenAvailability(false);
+    console.log("successfully logged out")
   }
 
   console.log(calendarListings);
   return (
     <>
-      <div className="Login-form-container">
+      <div className="login-form-container">
         <p className="login-form-description"></p>
         {!tokenAvailability ? (
           <>
-            <button className="login-form-button" onClick={loginHandler}>
+            <button className="user-auth-button" onClick={(e) => loginHandler(e)}>
               Login
             </button>
           </>
         ) : (
           <>
-            <p>welcome {userProfile.given_name}</p>
-            <p>Do you want to import today's google calendar events?</p>
-            <button>Skip</button>
-            <button onClick={logoutHandler}>LogOut</button>
-            <DisplayCalendar CalendarList={calendarListings} />
+            <div className="user-container">
+              <span>
+                <p className="user-name">Welcome {userProfile.given_name.charAt(0).toUpperCase()}{userProfile.given_name.slice(1)}</p>
+              </span>
+              <button className="user-auth-button" onClick={() => logoutHandler()}>
+                LogOut
+              </button>
+            </div>
           </>
         )}
       </div>
+      <DisplayCalendar CalendarList={calendarListings} />
     </>
   );
 }

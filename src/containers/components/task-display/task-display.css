@@ -1,3 +1,11 @@
+.header-bar-container{
+  align-self: center;
+  display: flex;
+  flex-direction: rows;
+  width: 90%;
+  justify-content: space-between;
+}
+
 .task-display-container{
     background-color: white;
     border-radius: 10px;
@@ -9,15 +17,52 @@
     flex-direction: column;
     padding-top: 0.5rem;
 }
-
-
-
 .task-display-body{
     align-self: center;
     width: 90%;
     height: 200px;
     overflow: scroll;
     
+}
+
+.task-display-searchbar{
+  border: solid black 0.5px;
+  padding: 5px 5px;
+  border-radius: 15px;
+}
+
+.task-display-add-icon{
+  cursor: 'pointer';
+  border-radius: 0.5;
+  width: 24px;
+  height: 24px;
+  /* justify-self: center; */
+  align-self: center;
+}
+
+.time-title{
+  padding: 0;
+  margin: 0;
+  font-size:14px;
+  color: black;
+  font-weight: 700;
+}
+
+.time-date{
+  padding: 0;
+  margin: 0;
+  font-size:10px;
+  color:black;
+  font-weight: 500;
+}
+
+.time-container{
+  display: flex;
+  display: inline-block;
+  flex-direction: column;
+  justify-items: start;
+  gap:3px;
+  padding: 2px 5px;
 }
 
 *::-webkit-scrollbar {

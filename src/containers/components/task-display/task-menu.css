@@ -1,0 +1,25 @@
+.menu-container{
+    position: relative
+}
+
+.menu-ellipsis{
+    color: black;
+    font-size:large;
+    font-weight: 900;
+    cursor: pointer;
+}
+.menu-popover-container{
+    z-index: 1000;
+    background-color: white;
+    border-radius: 5px;
+    border: solid grey 0.5px;
+    padding: 3px 5px;
+    position: absolute;
+    top: -25%;
+    left: -350%;
+    /* right: 100%; */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 2px 2px 5px rgb(201,201,201)
+}

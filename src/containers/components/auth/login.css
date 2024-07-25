@@ -1,0 +1,26 @@
+.login-form-container {
+}
+
+.user-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.user-name{
+  color: white;
+  font-weight: 700;
+}
+
+.user-auth-button {
+  background: rgb(255, 255, 255, 0.25);
+  color: white;
+  border-radius: 2.5px;
+  height: 25px;
+}
+
+.user-auth-button:hover{
+    background: rgb(255, 255, 255, 0.5);
+}

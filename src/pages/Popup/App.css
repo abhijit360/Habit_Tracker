@@ -14,6 +14,27 @@
     }
   }
   
+  .nav-container{
+    display: flex;
+    flex-direction: row;
+    gap: 12px;  
+    margin-bottom: 15px;
+  }
+  .nav-button{
+    background: transparent;
+    border: None;
+    color: white;
+    font-weight: 600;
+    padding: 5px 10px;
+  }
+
+  .nav-button:hover{
+    background: rgba(183, 188, 196, 0.25);
+    border-radius: 5px;
+    backdrop-filter: blur(10px); /* Apply the blur effect */
+  }
+
+
   .App-header {
     background-color: #282c34;
     min-height: 100vh;
