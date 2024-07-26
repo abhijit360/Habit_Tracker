@@ -106,25 +106,20 @@ export function TaskEditor({
     const auth_obj = await chrome.storage.session.get(
       'lockIn-curr-google-token'
     );
-
-    console.log("auth-obj taskedit", auth_obj)
-    console.log("auth token task edited", auth_obj['lockIn-curr-google-token'])
-
-    console.log(calendarID)
     if (state === 'edit') {
       if (current_edit_task_id) {
         const response = await fetch(
           `https://www.googleapis.com/calendar/v3/calendars/${TaskData?.calendarId}/events/${TaskData?.id}`,
           {
-            method: 'POST',
+            method: 'PATCH',
             body: JSON.stringify({
               start: {
-                date: data.time.startTime,
-                dateTime: data.time.startTime,
+                dateTime: new Date(data.time.startTime).toISOString(),
+                timeZone: new window.Intl.DateTimeFormat().resolvedOptions().timeZone
               },
               end: {
-                date: data.time.endTime,
-                dateTime: data.time.endTime,
+                dateTime: new Date(data.time.endTime).toISOString(),
+                timeZone: new window.Intl.DateTimeFormat().resolvedOptions().timeZone
               },
             }),
             headers: {
@@ -139,25 +134,6 @@ export function TaskEditor({
         }
       }
     } else {
-      console.log({
-        method: 'POST',
-        body: JSON.stringify({
-          summary: data.title,
-          description: data.body,
-          start: {
-            date: data.time.startTime,
-            dateTime: data.time.startTime,
-          },
-          end: {
-            date: data.time.endTime,
-            dateTime: data.time.endTime,
-          },
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${auth_obj['lockIn-curr-google-token']}`,
-        },
-      });
       const response = await fetch(
         `https://www.googleapis.com/calendar/v3/calendars/${calendarID}/events/`,
         {
@@ -166,12 +142,12 @@ export function TaskEditor({
             summary: data.title,
             description: data.body,
             start: {
-              date: data.time.startTime,
               dateTime: new Date(data.time.startTime).toISOString(),
+              timeZone: new window.Intl.DateTimeFormat().resolvedOptions().timeZone
             },
             end: {
-              date: data.time.endTime,
               dateTime: new Date(data.time.endTime).toISOString(),
+              timeZone: new window.Intl.DateTimeFormat().resolvedOptions().timeZone
             },
           }),
           headers: {
@@ -184,7 +160,7 @@ export function TaskEditor({
       if (response.ok) {
         console.log('created', await response.json());
       }else{
-        console.log("error:",await response.json())
+        console.log("error",await response.json())
       }
     }
   };
