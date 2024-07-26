@@ -9,22 +9,10 @@ import { useCalendarStore } from '../../../../stores/calendarStore';
 
 const resolver: Resolver<TaskType> = async (values) => {
   const errors: any = {};
-  if (!values.title) {
+  if (values.title.length === 0) {
     errors.title = {
       type: 'required',
       message: 'Title is required.',
-    };
-  } else if (values.title.length > 25) {
-    errors.title = {
-      type: 'maxLength',
-      message: 'Max length of title is 25 characters.',
-    };
-  }
-
-  if (values.body.length > 300) {
-    errors.body = {
-      type: 'maxLength',
-      message: 'Max length of body is 300 characters.',
     };
   }
   if (!values.time.startTime) {
@@ -72,6 +60,21 @@ const resolver: Resolver<TaskType> = async (values) => {
   };
 };
 
+function formatDateString(date: Date): string {
+  const pad = (number: number) => (number < 10 ? '0' : '') + number;
+  return (
+    date.getFullYear() +
+    '-' +
+    pad(date.getMonth() + 1) +
+    '-' +
+    pad(date.getDate()) +
+    'T' +
+    pad(date.getHours()) +
+    ':' +
+    pad(date.getMinutes())
+  );
+}
+
 export function TaskEditor({
   TaskData,
   state,
@@ -84,7 +87,7 @@ export function TaskEditor({
     handleSubmit,
     formState: { errors },
     setValue,
-  } = useForm<TaskType>({resolver, mode: "onChange"});
+  } = useForm<TaskType>({resolver, mode: "onBlur"});
 
   const { current_edit_task_id } = useNavigationStore();
   const { updateTask} = useTasksStore();
@@ -230,6 +233,7 @@ export function TaskEditor({
                 className="time-slot-selector"
                 {...register(`time.startTime`)}
                 type="datetime-local"
+                value={formatDateString(new Date(TaskData.time.startTime))}
               />
               {errors?.time?.startTime && (
                 <span className="error-message">
@@ -241,6 +245,7 @@ export function TaskEditor({
                 className="time-slot-selector"
                 {...register(`time.endTime`)}
                 type="datetime-local"
+                value={formatDateString(new Date(TaskData.time.endTime))}
               />
               {errors?.time?.endTime && (
                 <span className="error-message">
