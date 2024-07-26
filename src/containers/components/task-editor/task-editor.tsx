@@ -27,29 +27,41 @@ const resolver: Resolver<TaskType> = async (values) => {
       message: 'Max length of body is 300 characters.',
     };
   }
+  if (!values.time.startTime) {
+    errors.time = errors.time || {};
+    errors.time.startTime = {
+      type: 'required',
+      message: 'Start time is required.',
+    };
+  }
+
+  if (!values.time.endTime) {
+    errors.time = errors.time || {};
+    errors.time.endTime = {
+      type: 'required',
+      message: 'End time is required.',
+    };
+  }
 
   if (values.time) {
-    if (!values.time.startTime) {
-      errors.times.startTime = {
-        type: 'required',
-        message: 'Start time is required.',
-      };
-    }
-
-    if (!values.time.endTime) {
-      errors.times.endTime = {
-        type: 'required',
-        message: 'End time is required.',
-      };
-    }
-
     if (
       new Date(values.time.endTime).getTime() <
       new Date(values.time.startTime).getTime()
     ) {
-      errors.times.endTime = {
+      errors.time = errors.time || {};
+      errors.time.endTime = {
         type: 'timeError',
         message: "End time can't be before the start time.",
+      };
+    }
+    if (
+      new Date(values.time.endTime).getTime() >
+      new Date(values.time.startTime).getTime()
+    ) {
+      errors.time = errors.time || {};
+      errors.time.startTime = {
+        type: 'timeError',
+        message: "Start time can't be before the start time.",
       };
     }
   }
@@ -59,21 +71,6 @@ const resolver: Resolver<TaskType> = async (values) => {
     errors,
   };
 };
-
-function formatDateString(date: Date): string {
-  const pad = (number: number) => (number < 10 ? '0' : '') + number;
-  return (
-    date.getFullYear() +
-    '-' +
-    pad(date.getMonth() + 1) +
-    '-' +
-    pad(date.getDate()) +
-    'T' +
-    pad(date.getHours()) +
-    ':' +
-    pad(date.getMinutes())
-  );
-}
 
 export function TaskEditor({
   TaskData,
@@ -87,20 +84,21 @@ export function TaskEditor({
     handleSubmit,
     formState: { errors },
     setValue,
-  } = useForm<TaskType>({ resolver });
+  } = useForm<TaskType>({resolver, mode: "onChange"});
 
   const { current_edit_task_id } = useNavigationStore();
-  const { updateTask, tasks } = useTasksStore();
+  const { updateTask} = useTasksStore();
   const { calendars } = useCalendarStore();
 
   const TITLE_CHAR_LIMIT = 30;
   const BODY_CHAR_LIMIT = 500;
 
-  const [titleCharacterCount, setTitleCharacterCount] = useState<number>(TITLE_CHAR_LIMIT);
-  const [bodyCharacterCount, setBodyCharacterCount] = useState<number>(BODY_CHAR_LIMIT);
+  const [titleCharacterCount, setTitleCharacterCount] =
+    useState<number>(TITLE_CHAR_LIMIT);
+  const [bodyCharacterCount, setBodyCharacterCount] =
+    useState<number>(BODY_CHAR_LIMIT);
 
   const [calendarID, setCalendarID] = useState<string>('');
-  const [calendarError, setCalendarError] = useState<string>('');
 
   const onSubmit: SubmitHandler<TaskType> = async (data) => {
     const auth_obj = await chrome.storage.session.get(
@@ -115,11 +113,13 @@ export function TaskEditor({
             body: JSON.stringify({
               start: {
                 dateTime: new Date(data.time.startTime).toISOString(),
-                timeZone: new window.Intl.DateTimeFormat().resolvedOptions().timeZone
+                timeZone: new window.Intl.DateTimeFormat().resolvedOptions()
+                  .timeZone,
               },
               end: {
                 dateTime: new Date(data.time.endTime).toISOString(),
-                timeZone: new window.Intl.DateTimeFormat().resolvedOptions().timeZone
+                timeZone: new window.Intl.DateTimeFormat().resolvedOptions()
+                  .timeZone,
               },
             }),
             headers: {
@@ -143,11 +143,13 @@ export function TaskEditor({
             description: data.body,
             start: {
               dateTime: new Date(data.time.startTime).toISOString(),
-              timeZone: new window.Intl.DateTimeFormat().resolvedOptions().timeZone
+              timeZone: new window.Intl.DateTimeFormat().resolvedOptions()
+                .timeZone,
             },
             end: {
               dateTime: new Date(data.time.endTime).toISOString(),
-              timeZone: new window.Intl.DateTimeFormat().resolvedOptions().timeZone
+              timeZone: new window.Intl.DateTimeFormat().resolvedOptions()
+                .timeZone,
             },
           }),
           headers: {
@@ -159,8 +161,8 @@ export function TaskEditor({
 
       if (response.ok) {
         console.log('created', await response.json());
-      }else{
-        console.log("error",await response.json())
+      } else {
+        console.log('error', await response.json());
       }
     }
   };
@@ -174,20 +176,17 @@ export function TaskEditor({
 
   function handleCalendarSelection(e: React.SyntheticEvent) {
     const target = e.currentTarget as HTMLOptionElement;
-    console.log('calendarId- addTask', target.value);
     setCalendarID(target.value);
   }
 
   function handleTitleChange(e: React.ChangeEvent) {
     const target = e.target as HTMLInputElement;
-    const textData = target.value;
-    setTitleCharacterCount(TITLE_CHAR_LIMIT - textData.length)
+    setTitleCharacterCount(TITLE_CHAR_LIMIT - target.value.length);
   }
 
   function handleBodyChange(e: React.ChangeEvent) {
     const target = e.target as HTMLInputElement;
-    const textData = target.value;
-    setBodyCharacterCount(BODY_CHAR_LIMIT - textData.length);
+    setBodyCharacterCount(BODY_CHAR_LIMIT - target.value.length);
   }
 
   return (
