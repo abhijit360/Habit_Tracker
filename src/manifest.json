@@ -43,6 +43,6 @@
   "permissions": ["storage", "identity"],
   "oauth2": {
     "client_id": "1089239919616-c7gfkrfd0gh9qltss2o95sugdkjfa8ik.apps.googleusercontent.com",
-    "scopes": ["profile", "email", "https://www.googleapis.com/auth/calendar"]
+    "scopes": ["profile", "email", "https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/calendar.events"]
   }
 }

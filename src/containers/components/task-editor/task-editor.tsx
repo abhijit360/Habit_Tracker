@@ -106,6 +106,11 @@ export function TaskEditor({
     const auth_obj = await chrome.storage.session.get(
       'lockIn-curr-google-token'
     );
+
+    console.log("auth-obj taskedit", auth_obj)
+    console.log("auth token task edited", auth_obj['lockIn-curr-google-token'])
+
+    console.log(calendarID)
     if (state === 'edit') {
       if (current_edit_task_id) {
         const response = await fetch(
@@ -123,7 +128,8 @@ export function TaskEditor({
               },
             }),
             headers: {
-              Authorization: `bearer ${auth_token}`,
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${auth_obj['lockIn-curr-google-token']}`,
             },
           }
         );
@@ -148,6 +154,7 @@ export function TaskEditor({
           },
         }),
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${auth_obj['lockIn-curr-google-token']}`,
         },
       });
@@ -160,21 +167,24 @@ export function TaskEditor({
             description: data.body,
             start: {
               date: data.time.startTime,
-              dateTime: data.time.startTime,
+              dateTime: new Date(data.time.startTime).toISOString(),
             },
             end: {
               date: data.time.endTime,
-              dateTime: data.time.endTime,
+              dateTime: new Date(data.time.endTime).toISOString(),
             },
           }),
           headers: {
-            authorization: `bearer ${auth_obj['lockIn-curr-google-token']}`,
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${auth_obj['lockIn-curr-google-token']}`,
           },
         }
       );
 
       if (response.ok) {
         console.log('created', await response.json());
+      }else{
+        console.log("error:",await response.json())
       }
     }
   };
