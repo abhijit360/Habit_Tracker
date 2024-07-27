@@ -9,6 +9,7 @@ import './display-calendar.css';
 import { useTasksStore } from '../../../../stores/taskStore';
 import { useNavigationStore } from '../../../../stores/navigationStore';
 import { useCalendarStore } from '../../../../stores/calendarStore';
+import { useErrorStore } from '../../../../stores/errorStore';
 interface DisplayCalendarProps {
   CalendarList: GoogleCalendarListing[];
 }
@@ -16,7 +17,9 @@ interface DisplayCalendarProps {
 export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
   const { updateNavigation } = useNavigationStore();
   const { tasks, append, remove } = useTasksStore();
+  const { setError } = useErrorStore();
   const { calendars } = useCalendarStore();
+  const [selectedTasks, setSelectedTasks] = useState<Set<string>>(new Set<string>())
 
   async function handleCalendarSelect(e: React.MouseEvent) {
     const target = e.target as HTMLInputElement;
@@ -24,6 +27,10 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
     const calendarName = calendars.filter(
       (c) => c.calendarId === calendarId
     )[0];
+    if(selectedTasks.has(calendarName.calendarName)){
+      setError(`Task from ${calendarName.calendarName} have already been imported`);
+      return
+    }
     const tokenObj = await chrome.storage.session.get(
       'lockIn-curr-google-token'
     );
@@ -61,6 +68,8 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
       };
       append(newTask);
     });
+    setError(`Getting tasks from ${calendarName.calendarName}`);
+    setSelectedTasks((prev) => prev.add(calendarName.calendarName))
   }
   function formatDateString(date: Date): string {
     const hours =
@@ -129,22 +138,12 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
           <p>No Calendars to Import</p>
         )}
       </div>
-      <div className="calendar-events-container">
-        {tasks.map((task) => (
-          <>
-            <div className="preliminary-task-display">
-              <p style={{ color: 'black' }} className="task-tite">
-                {task.title}
-              </p>
-              <p style={{ color: 'black' }} className="task-date">
-                {formatDateString(new Date(task.time.startTime))} -
-                {formatDateString(new Date(task.time.endTime))}
-              </p>
-              <button onClick={() => remove(task.id)}>remove</button>
-            </div>
-          </>
-        ))}
-      </div>
+      <p>Tasks imported from:</p>
+      <ul>
+        {selectedTasks.values().map( calendarName =>
+          <li className='calendar-selected-name'>{calendarName}</li>
+        )}
+      </ul>
       <button onClick={() => handleTaskStateCreation()}>
         Continue to track
       </button>

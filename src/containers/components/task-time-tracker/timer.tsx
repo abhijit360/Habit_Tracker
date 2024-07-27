@@ -67,6 +67,7 @@ export function Timer({
         setCurrentTime(request);
       }
     });
+    
   }, []);
 
   async function playHandler() {
