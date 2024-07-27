@@ -1,4 +1,4 @@
-import React, {HTMLInputTypeAttribute, useState} from 'react';
+import React, {HTMLInputTypeAttribute, useEffect, useState} from 'react';
 import { Task } from './task';
 import './task-display.css';
 import addIcon from '../../../assets/img/add.svg';
@@ -11,7 +11,7 @@ export function TaskDisplay() {
   const { tasks } = useTasksStore();
   const { updateNavigation } = useNavigationStore();
   const [filteredTask, setFilteredTasks] = useState<TaskType[]>(tasks)
-
+  let searchTerm = ""
   function getFormattedDate(date: Date) {
     var year = date.getFullYear();
 
@@ -26,9 +26,13 @@ export function TaskDisplay() {
 
   function handleSearch(e: React.ChangeEvent){
     const input = e.target as HTMLInputElement
-    const searchTerm = input.value
+    searchTerm = input.value
     setFilteredTasks(tasks.filter((task) => task.title.toLowerCase().includes(searchTerm.toLowerCase())))
   }
+
+  useEffect(() => {
+    setFilteredTasks(tasks.filter((task) => task.title.toLowerCase().includes(searchTerm.toLowerCase())))
+  }, [searchTerm, tasks])
 
 
   return (
@@ -59,8 +63,9 @@ export function TaskDisplay() {
               time={task.time}
               state={task.state}
               title={task.title}
-              body={task.body}
-            />
+              body={task.body} 
+              calendarName={task.calendarName}
+              />
           ))}
         </div>
       </div>

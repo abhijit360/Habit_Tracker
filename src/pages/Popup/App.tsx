@@ -15,6 +15,7 @@ function App() {
   const {
     current_navigation_state,
     current_edit_task_id,
+    current_task_id,
     updateNavigation,
     updateCurrentTask,
   } = useNavigationStore();
@@ -76,6 +77,15 @@ function App() {
           >
             Task Display
           </button>
+          {current_task_id && 
+          <button
+            className="nav-button"
+            value={'TaskTimer'}
+            onClick={incrementNavigation}
+          >
+            Time Tracker
+          </button>
+        }
         </div>
         {/* <TaskHistory /> */}
         {current_navigation_state === 'Login' ? (

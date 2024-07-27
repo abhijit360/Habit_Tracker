@@ -33,6 +33,7 @@
     font-size:small;
     font-weight: 300;
     width: 45px;
+    cursor: pointer;
 }
 
 .menu-button:hover{
