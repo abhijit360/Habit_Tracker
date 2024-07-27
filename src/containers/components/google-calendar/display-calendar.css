@@ -20,7 +20,8 @@
 
 .calendar-selected-name{
     font-size: 12px;
-    color:white
+    color:white;
+    list-style: none;
 }
 
 .preliminary-task-display{

@@ -47,6 +47,8 @@ function App() {
     await chrome.storage.session.set({ 'lockIn-curr-google-token': null });
     clearTaskState()
     updateNavigation("Login")
+    // eslint-disable-next-line no-restricted-globals
+    location.reload()
   }
 
   useEffect(() => {
@@ -63,9 +65,9 @@ function App() {
           <button
             className="nav-button"
             value={'Login'}
-            onClick={() => current_navigation_state === "Login" ? () => {} : handleLogOut()}
+            onClick={() => current_navigation_state === "Login" ? handleLogOut() :  updateNavigation("Login") }
           >
-            {current_navigation_state == "Login" ? "Home": "Logout" }
+            {current_navigation_state !== "Login" ? "Home": "Logout" }
           </button>
           <button
             className="nav-button"

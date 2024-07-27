@@ -121,9 +121,6 @@ export function LogIn() {
               <span>
                 <p className="user-name">Welcome {userProfile.given_name.charAt(0).toUpperCase()}{userProfile.given_name.slice(1)}</p>
               </span>
-              <button className="user-auth-button" onClick={() => logoutHandler()}>
-                LogOut
-              </button>
             </div>
           </>
         )}
