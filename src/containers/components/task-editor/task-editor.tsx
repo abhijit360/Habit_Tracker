@@ -43,8 +43,8 @@ const resolver: Resolver<TaskType> = async (values) => {
       };
     }
     if (
-      new Date(values.time.endTime).getTime() >
-      new Date(values.time.startTime).getTime()
+      new Date(values.time.startTime).getTime() >
+      new Date(values.time.endTime).getTime()
     ) {
       errors.time = errors.time || {};
       errors.time.startTime = {
@@ -90,7 +90,7 @@ export function TaskEditor({
   } = useForm<TaskType>({resolver, mode: "onBlur"});
 
   const { current_edit_task_id } = useNavigationStore();
-  const { updateTask} = useTasksStore();
+  const { updateTask, append } = useTasksStore();
   const { calendars } = useCalendarStore();
 
   const TITLE_CHAR_LIMIT = 30;
@@ -164,6 +164,7 @@ export function TaskEditor({
 
       if (response.ok) {
         console.log('created', await response.json());
+        
       } else {
         console.log('error', await response.json());
       }
@@ -233,7 +234,7 @@ export function TaskEditor({
                 className="time-slot-selector"
                 {...register(`time.startTime`)}
                 type="datetime-local"
-                value={formatDateString(new Date(TaskData.time.startTime))}
+                defaultValue={TaskData.time ? formatDateString(new Date(TaskData.time.startTime)) : ""}
               />
               {errors?.time?.startTime && (
                 <span className="error-message">
@@ -245,7 +246,7 @@ export function TaskEditor({
                 className="time-slot-selector"
                 {...register(`time.endTime`)}
                 type="datetime-local"
-                value={formatDateString(new Date(TaskData.time.endTime))}
+                defaultValue={TaskData.time ? formatDateString(new Date(TaskData.time.endTime)) : ""}
               />
               {errors?.time?.endTime && (
                 <span className="error-message">

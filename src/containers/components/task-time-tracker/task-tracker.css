@@ -1,23 +1,45 @@
-.time-tracker-container{
-    background-color: white;
-    border-radius: 10px;
-    padding: 3px 5px;
-    width:450px;
-    height: 250px;
-    color: black;
-    display: flex;
-    flex-direction: column;
-    
+.time-tracker-container {
+  background-color: white;
+  border-radius: 10px;
+  padding: 3px 5px;
+  width: 450px;
+  height: 250px;
+  color: black;
+  display: flex;
+  flex-direction: column;
 }
 
-.current-task-label{
-    font-size: 25px;
-    font-weight: 800;
-    border-bottom: 3px solid black;
-    /* width: 100px; */
-    /* display: inline-block; */
-    height: 25px;
-    text-align: start;
-    padding-left: 10px;
-    padding-bottom: 3px;
+.current-task-label {
+  font-size: 25px;
+  font-weight: 800;
+  border-bottom: 3px solid black;
+  /* width: 100px; */
+  /* display: inline-block; */
+  height: 25px;
+  text-align: start;
+  padding-left: 10px;
+  padding-bottom: 3px;
+}
+
+.task-description-container {
+  padding-left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 27px;
+}
+.task-description-title {
+  font-size: 20px;
+  font-weight: 700;
+  text-align: start;
+  margin: 0;
+}
+
+.task-description-body {
+  padding-top: 0;
+  font-size: 16px;
+  text-overflow: ellipsis;
+  height: 100px;
+  text-align: start;
+  margin: 0;
 }
