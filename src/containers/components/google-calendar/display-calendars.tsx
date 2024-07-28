@@ -31,12 +31,12 @@ export function DisplayCalendar({
   async function handleCalendarSelect(e: React.ChangeEvent) {
     const target = e.target as HTMLInputElement;
     const calendarId = target.value;
-    const calendarName = calendars.filter(
+    const currentCalendar = calendars.filter(
       (c) => c.calendarId === calendarId
     )[0];
-    if (selectedCalendars.has(calendarName.calendarName)) {
+    if (selectedCalendars.has(currentCalendar.calendarName)) {
       setError(
-        `Task from ${calendarName.calendarName} have already been imported`
+        `Task from ${currentCalendar.calendarName} have already been imported`
       );
       return;
     }
@@ -70,7 +70,7 @@ export function DisplayCalendar({
       newTask.id = event.id;
       newTask.body = event.description;
       newTask.calendarId = calendarId;
-      newTask.calendarName = calendarName ? calendarName.calendarName : '';
+      newTask.calendarName = currentCalendar ? currentCalendar.calendarName : '';
       newTask.state = 'new';
       newTask.time = {
         startTime: new Date(event.start.dateTime),
@@ -78,11 +78,11 @@ export function DisplayCalendar({
       };
       append(newTask);
     });
-    setSelectedCalendars((prev: Set<string>) => {
-      prev.add(calendarName.calendarName);
-      return prev;
-    });
-    setError(`Getting tasks from ${calendarName.calendarName}`);
+    setSelectedCalendars(
+      (prev) => new Set(prev.add(currentCalendar.calendarName))
+    );
+
+    setError(`Getting tasks from ${currentCalendar.calendarName}`);
   }
 
   async function handleTaskStateCreation() {
