@@ -3,12 +3,18 @@
   border-radius: 10px;
   padding: 3px 5px;
   width: 450px;
-  height: 500px;
+  height: 350px;
   color: black;
   display: flex;
   flex-direction: column;
   padding-top: 0.5rem;
   align-items: center;
+}
+
+.task-editor-container form{
+  display: flex;
+  flex-direction: column;
+  /* gap: 10px */
 }
 
 .time-slot-container{
@@ -60,4 +66,26 @@
 .error-message{
   font-size: 16px;
   color: rgb(237,35,35);
+}
+
+.time-submit-button{
+  margin-top: 15px;
+  width: 100px;
+  align-self: center;
+}
+
+.time-error-container{
+  display: flex;
+  flex-direction: row;
+  gap: 25px;
+  margin: 0;
+  padding: 0;
+}
+
+.input-character-count{
+  margin-top:10px;
+  margin-right: 10px;
+  font-size: 12px;
+  align-self: flex-end;
+  
 }

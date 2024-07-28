@@ -242,7 +242,10 @@ export function TaskEditor({
               type="text"
               onChange={handleTitleChange}
             />
-            <span>Character count: {titleCharacterCount}</span>
+            <span className="input-character-count">
+              Character count:{' '}
+              <span style={{ fontWeight: 'bold' }}>{titleCharacterCount}</span>
+            </span>
             {errors?.title && (
               <span className="error-message">*{errors.title.message}</span>
             )}
@@ -254,7 +257,10 @@ export function TaskEditor({
               maxLength={BODY_CHAR_LIMIT}
               onChange={handleBodyChange}
             />
-            <span>Character count: {bodyCharacterCount}</span>
+            <span className="input-character-count">
+              Character count:{' '}
+              <span style={{ fontWeight: 'bold' }}>{bodyCharacterCount}</span>
+            </span>
             {errors?.body && (
               <span className="error-message">*{errors.body.message}</span>
             )}
@@ -269,11 +275,6 @@ export function TaskEditor({
                     : ''
                 }
               />
-              {errors?.time?.startTime && (
-                <span className="error-message">
-                  *{errors.time?.startTime?.message}
-                </span>
-              )}
               <span className="time-slot-separator">-</span>
               <input
                 className="time-slot-selector"
@@ -285,6 +286,13 @@ export function TaskEditor({
                     : ''
                 }
               />
+            </div>
+            <div className="time-error-container">
+              {errors?.time?.startTime && (
+                <span className="error-message">
+                  *{errors.time?.startTime?.message}
+                </span>
+              )}
               {errors?.time?.endTime && (
                 <span className="error-message">
                   *{errors?.time.endTime?.message}
@@ -292,6 +300,7 @@ export function TaskEditor({
               )}
             </div>
             <input
+              className="time-submit-button"
               type="submit"
               onSubmit={(e) => console.log('submitting form', e)}
             />
