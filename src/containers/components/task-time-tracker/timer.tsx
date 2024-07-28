@@ -140,7 +140,7 @@ export function Timer({
       }
     );
     if (response.ok) {
-      updateNavigation("TaskDisplay")
+      deleteTimerHandler()
     }else{
       setError("Failed to export to Google calendar!")
     }

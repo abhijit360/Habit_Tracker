@@ -6,6 +6,8 @@ import { useNavigationStore } from '../../../../stores/navigationStore';
 import { useTasksStore } from '../../../../stores/taskStore';
 import { Task } from '../task-display/task';
 import { useCalendarStore } from '../../../../stores/calendarStore';
+import { useErrorStore } from '../../../../stores/errorStore';
+import { updateLocalTaskState} from "../../../../utils"
 
 const resolver: Resolver<TaskType> = async (values) => {
   const errors: any = {};
@@ -89,8 +91,9 @@ export function TaskEditor({
     setValue,
   } = useForm<TaskType>({resolver, mode: "onBlur"});
 
-  const { current_edit_task_id } = useNavigationStore();
-  const { updateTask, append } = useTasksStore();
+  const { current_edit_task_id, updateNavigation } = useNavigationStore();
+  const { updateTask, append, tasks} = useTasksStore();
+  const {setError} = useErrorStore()
   const { calendars } = useCalendarStore();
 
   const TITLE_CHAR_LIMIT = 30;
@@ -134,6 +137,10 @@ export function TaskEditor({
         if (response.ok) {
           data.id = current_edit_task_id;
           updateTask(data, current_edit_task_id);
+          updateLocalTaskState(tasks)
+          updateNavigation("TaskDisplay")
+        }else{
+          setError("Server Error: Unable to apply changes")
         }
       }
     } else {
@@ -162,11 +169,13 @@ export function TaskEditor({
         }
       );
 
-      if (response.ok) {
-        console.log('created', await response.json());
-        
-      } else {
-        console.log('error', await response.json());
+      if (response.ok && TaskData) {
+        const task: TaskType = await response.json();
+        TaskData.id = task.id
+        updateLocalTaskState(TaskData)
+        updateNavigation("TaskDisplay")
+      }else{
+        setError("Server Error: Failed to create task")
       }
     }
   };
