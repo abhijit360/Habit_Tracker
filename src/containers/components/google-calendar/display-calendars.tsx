@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   GoogleCalendarEvent,
   GoogleCalendarEventListing,
@@ -9,6 +9,7 @@ import './display-calendar.css';
 import { useTasksStore } from '../../../../stores/taskStore';
 import { useNavigationStore } from '../../../../stores/navigationStore';
 import { useCalendarStore } from '../../../../stores/calendarStore';
+import { useErrorStore } from '../../../../stores/errorStore';
 interface DisplayCalendarProps {
   CalendarList: GoogleCalendarListing[];
 }
@@ -16,14 +17,24 @@ interface DisplayCalendarProps {
 export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
   const { updateNavigation } = useNavigationStore();
   const { tasks, append, remove } = useTasksStore();
+  const { setError } = useErrorStore();
   const { calendars } = useCalendarStore();
+  const [selectedCalendars, setSelectedCalendars] = useState<Set<string>>(
+    new Set<string>()
+  );
 
-  async function handleCalendarSelect(e: React.MouseEvent) {
+  async function handleCalendarSelect(e: React.ChangeEvent) {
     const target = e.target as HTMLInputElement;
     const calendarId = target.value;
     const calendarName = calendars.filter(
       (c) => c.calendarId === calendarId
     )[0];
+    if (selectedCalendars.has(calendarName.calendarName)) {
+      setError(
+        `Task from ${calendarName.calendarName} have already been imported`
+      );
+      return;
+    }
     const tokenObj = await chrome.storage.session.get(
       'lockIn-curr-google-token'
     );
@@ -35,6 +46,7 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
       now.getMonth(),
       now.getDate() + 1
     );
+
     const response = await fetch(
       `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?timeMax=${timeMax.toISOString()}&timeMin=${timeMin.toISOString()}&eventTypes=default`,
       {
@@ -61,25 +73,19 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
       };
       append(newTask);
     });
+    setSelectedCalendars((prev: Set<string>) => {
+      prev.add(calendarName.calendarName);
+      return prev;
+    });
+    setError(`Getting tasks from ${calendarName.calendarName}`);
   }
-  function formatDateString(date: Date): string {
-    const hours =
-      date.getHours().toString().length === 1
-        ? `0${date.getHours().toString()}`
-        : date.getHours().toString();
-    const minutes =
-      date.getMinutes().toString().length === 1
-        ? `0${date.getMinutes().toString()}`
-        : date.getMinutes().toString();
-    const seconds =
-      date.getSeconds().toString().length === 1
-        ? `0${date.getSeconds().toString()}`
-        : date.getSeconds().toString();
-    return `${hours}:${minutes}:${seconds}`;
-  }
+
   async function handleTaskStateCreation() {
     await chrome.storage.session.set({
       current_task_state: JSON.stringify(tasks),
+    });
+    await chrome.storage.session.set({
+      current_calendars_imported: JSON.stringify(Array.from(selectedCalendars)),
     });
     updateNavigation('TaskDisplay');
   }
@@ -91,11 +97,17 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
     if (response['lockIn-curr-google-token']) {
       const response = await chrome.storage.session.get('current_task_state');
       if (response['current_task_state']) {
-        console.log('stored tasks:', response['current_task_state']);
         const val: TaskType[] = JSON.parse(response['current_task_state']);
         val.forEach((task: TaskType) => append(task));
-        val.forEach((task) =>
-          console.log('individual task', task.time.endTime)
+      }
+      const calendarsStorageObject = await chrome.storage.session.get(
+        'current_calendars_imported'
+      );
+      if (calendarsStorageObject) {
+        setSelectedCalendars(
+          new Set(
+            JSON.parse(calendarsStorageObject['current_calendars_imported'])
+          )
         );
       }
     }
@@ -105,7 +117,14 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
     checkExistingTaskState();
   }, []);
 
-  console.log('tasks', tasks);
+  const selectedCalendarList = useMemo(() => {
+    return Array.from(selectedCalendars).map((calendarName) => (
+      <li key={calendarName} className="calendar-selected-name">
+        {calendarName}
+      </li>
+    ));
+  }, [selectedCalendars]);
+
   return (
     <div className="calendar-container">
       <p>Select which calendar and tasks to import</p>
@@ -129,22 +148,8 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
           <p>No Calendars to Import</p>
         )}
       </div>
-      <div className="calendar-events-container">
-        {tasks.map((task) => (
-          <>
-            <div className="preliminary-task-display">
-              <p style={{ color: 'black' }} className="task-tite">
-                {task.title}
-              </p>
-              <p style={{ color: 'black' }} className="task-date">
-                {formatDateString(new Date(task.time.startTime))} -
-                {formatDateString(new Date(task.time.endTime))}
-              </p>
-              <button onClick={() => remove(task.id)}>remove</button>
-            </div>
-          </>
-        ))}
-      </div>
+      <p>Tasks imported from:</p>
+      <ul>{selectedCalendarList}</ul>
       <button onClick={() => handleTaskStateCreation()}>
         Continue to track
       </button>

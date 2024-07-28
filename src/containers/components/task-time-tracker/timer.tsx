@@ -3,14 +3,18 @@ import './timer.css';
 import pauseIcon from '../../../assets/img/pause.svg';
 import playIcon from '../../../assets/img/play.svg';
 import deleteIcon from '../../../assets/img/delete.svg';
+import googleIcon from '../../../assets/img/google-tile.svg';
 import { useNavigationStore } from '../../../../stores/navigationStore';
+import { useTasksStore } from '../../../../stores/taskStore';
+import { TaskType } from '../../../../types';
+import { useErrorStore } from '../../../../stores/errorStore';
 
 interface TimerProps {
   hours: number;
   minutes: number;
   seconds: number;
   started: boolean;
-  updateTaskTime: (time: { h: number; m: number; s: number }) => void;
+  currentTask: TaskType;
 }
 
 export function Timer({
@@ -18,16 +22,19 @@ export function Timer({
   minutes,
   seconds,
   started,
-  updateTaskTime,
+  currentTask,
 }: TimerProps) {
   const [toggleIcon, setToggleIcon] = useState<boolean>(started);
-  const { current_task_id } = useNavigationStore();
+  const { current_task_id, updateCurrentTask, updateNavigation } =
+    useNavigationStore();
   const [currentTime, setCurrentTime] = useState<{
     h: number;
     m: number;
     s: number;
   }>({ h: 0, m: 0, s: 0 });
   const [firstCounter, setFirstCounter] = useState<number>(0);
+  const { updateTask } = useTasksStore();
+  const {setError} = useErrorStore()
 
   async function checkForExistingCounter() {
     console.log('checking if val exists');
@@ -52,10 +59,6 @@ export function Timer({
     }
   }
 
-  // useEffect(() =>{
-  //   checkForExistingCounter();
-  // },[toggleIcon])
-
   useEffect(() => {
     checkForExistingCounter();
     chrome.runtime.onMessage.addListener(function (
@@ -68,17 +71,6 @@ export function Timer({
       }
     });
   }, []);
-
-  const h =
-    hours.toString().length === 1 ? `0${hours.toString()}` : hours.toString();
-  const m =
-    minutes.toString().length === 1
-      ? `0${minutes.toString()}`
-      : minutes.toString();
-  const s =
-    seconds.toString().length === 1
-      ? `0${seconds.toString()}`
-      : seconds.toString();
 
   async function playHandler() {
     console.log('first counter:', firstCounter);
@@ -107,6 +99,8 @@ export function Timer({
     });
     console.log('deleting timer storage', response);
     await chrome.storage.session.set({ 'current-task-id': null });
+    updateCurrentTask('');
+    updateNavigation('TaskDisplay');
   }
 
   async function pauseHandler() {
@@ -114,6 +108,42 @@ export function Timer({
     const response = await chrome.runtime.sendMessage({ type: 'pause-timer' });
     console.log('pause response', response);
     //  update the time here
+    currentTask.time.startTime = new Date(new Date(Date.now()).getTime() - (60 * 60 * currentTime.h + 60 * currentTime.m + currentTime.s) * 1000)
+    currentTask.time.endTime = new Date(Date.now());
+    updateTask(
+      currentTask,
+      currentTask.id
+    );
+  }
+  async function updateGoogleEvent(){
+    const auth_obj = await chrome.storage.session.get("lockIn-curr-google-token")
+    const response = await fetch(
+      `https://www.googleapis.com/calendar/v3/calendars/${currentTask?.calendarId}/events/${currentTask?.id}`,
+      {
+        method: 'PATCH',
+        body: JSON.stringify({
+          start: {
+            dateTime: new Date(currentTask.time.startTime).toISOString(),
+            timeZone: new window.Intl.DateTimeFormat().resolvedOptions()
+              .timeZone,
+          },
+          end: {
+            dateTime: new Date(currentTask.time.endTime).toISOString(),
+            timeZone: new window.Intl.DateTimeFormat().resolvedOptions()
+              .timeZone,
+          },
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${auth_obj['lockIn-curr-google-token']}`,
+        },
+      }
+    );
+    if (response.ok) {
+      deleteTimerHandler()
+    }else{
+      setError("Failed to export to Google calendar!")
+    }
   }
 
   return (
@@ -165,6 +195,16 @@ export function Timer({
             onClick={deleteTimerHandler}
           />
         </div>
+        {!toggleIcon && (
+          <div className="google-button" onClick={() => updateGoogleEvent()}>
+            <img
+              className="google-button-logo"
+              src={googleIcon}
+              alt="Google Icon"
+            />
+            <p className="google-button-text">Export to google</p>
+          </div>
+        )}
       </div>
     </>
   );

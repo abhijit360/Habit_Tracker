@@ -17,6 +17,13 @@
     flex-direction: column;
 
 }
+
+.calendar-selected-name{
+    font-size: 12px;
+    color:white;
+    list-style: none;
+}
+
 .preliminary-task-display{
     font-size: medium;
     display: flex;

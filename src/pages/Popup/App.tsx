@@ -15,6 +15,7 @@ function App() {
   const {
     current_navigation_state,
     current_edit_task_id,
+    current_task_id,
     updateNavigation,
     updateCurrentTask,
   } = useNavigationStore();
@@ -47,6 +48,8 @@ function App() {
     await chrome.storage.session.set({ 'lockIn-curr-google-token': null });
     clearTaskState()
     updateNavigation("Login")
+    // eslint-disable-next-line no-restricted-globals
+    location.reload()
   }
 
   useEffect(() => {
@@ -63,9 +66,9 @@ function App() {
           <button
             className="nav-button"
             value={'Login'}
-            onClick={() => current_navigation_state === "Login" ? () => {} : handleLogOut()}
+            onClick={() => current_navigation_state === "Login" ? handleLogOut() :  updateNavigation("Login") }
           >
-            {current_navigation_state == "Login" ? "Home": "Logout" }
+            {current_navigation_state !== "Login" ? "Home": "Logout" }
           </button>
           <button
             className="nav-button"
@@ -74,6 +77,15 @@ function App() {
           >
             Task Display
           </button>
+          {current_task_id && 
+          <button
+            className="nav-button"
+            value={'TaskTimer'}
+            onClick={incrementNavigation}
+          >
+            Time Tracker
+          </button>
+        }
         </div>
         {/* <TaskHistory /> */}
         {current_navigation_state === 'Login' ? (

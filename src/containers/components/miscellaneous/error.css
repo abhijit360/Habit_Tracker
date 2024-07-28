@@ -21,9 +21,10 @@
 }
 
 .error-text{
-    font-size:medium;
+    font-size:12px;
     font-weight: bold;
     color: black;
+
 }
 
 @keyframes render {
