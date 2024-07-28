@@ -10,13 +10,18 @@ import { useTasksStore } from '../../../../stores/taskStore';
 import { useNavigationStore } from '../../../../stores/navigationStore';
 import { useCalendarStore } from '../../../../stores/calendarStore';
 import { useErrorStore } from '../../../../stores/errorStore';
+import { Loading } from '../miscellaneous/loading';
 interface DisplayCalendarProps {
   CalendarList: GoogleCalendarListing[];
+  calendarDataObtained: boolean;
 }
 
-export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
+export function DisplayCalendar({
+  CalendarList,
+  calendarDataObtained,
+}: DisplayCalendarProps) {
   const { updateNavigation } = useNavigationStore();
-  const { tasks, append, remove } = useTasksStore();
+  const { tasks, append } = useTasksStore();
   const { setError } = useErrorStore();
   const { calendars } = useCalendarStore();
   const [selectedCalendars, setSelectedCalendars] = useState<Set<string>>(
@@ -127,9 +132,15 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
 
   return (
     <div className="calendar-container">
-      <p>Select which calendar and tasks to import</p>
+      {!calendarDataObtained && (
+        <span style={{ alignSelf: 'center' }}>
+          <Loading />
+        </span>
+      )}
+      {calendarDataObtained && <p>Select which calendar and tasks to import</p>}
       <div className="calendar-listing">
-        {CalendarList.length > 0 ? (
+        {calendarDataObtained &&
+          CalendarList.length > 0 &&
           CalendarList.map((calendar, index) => (
             <>
               <label className="calendar-title">
@@ -143,16 +154,20 @@ export function DisplayCalendar({ CalendarList }: DisplayCalendarProps) {
                 {calendar.summary}
               </label>
             </>
-          ))
-        ) : (
+          ))}
+        {calendarDataObtained && CalendarList.length === 0 && (
           <p>No Calendars to Import</p>
         )}
       </div>
-      <p>Tasks imported from:</p>
-      <ul>{selectedCalendarList}</ul>
-      <button onClick={() => handleTaskStateCreation()}>
-        Continue to track
-      </button>
+      {calendarDataObtained && (
+        <>
+          <p>Tasks imported from:</p>
+          <ul className="calen">{selectedCalendarList}</ul>
+          <button onClick={() => handleTaskStateCreation()}>
+            Continue to track
+          </button>
+        </>
+      )}
     </div>
   );
 }
