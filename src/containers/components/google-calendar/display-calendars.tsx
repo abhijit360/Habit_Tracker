@@ -81,7 +81,6 @@ export function DisplayCalendar({
     setSelectedCalendars(
       (prev) => new Set(prev.add(currentCalendar.calendarName))
     );
-
     setError(`Getting tasks from ${currentCalendar.calendarName}`);
   }
 
