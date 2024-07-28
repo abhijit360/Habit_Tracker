@@ -8,6 +8,8 @@ import { useTasksStore } from '../../../../stores/taskStore';
 import { DisplayCalendar } from '../google-calendar/display-calendars';
 import './login.css';
 import {useCalendarStore} from "../../../../stores/calendarStore"
+import {Loading} from "../miscellaneous/loading"
+
 
 export function LogIn() {
   const [tokenAvailability, setTokenAvailability] = useState<boolean>(false);
@@ -108,6 +110,7 @@ export function LogIn() {
   return (
     <>
       <div className="login-form-container">
+        <Loading />
         <p className="login-form-description"></p>
         {!tokenAvailability ? (
           <>
