@@ -33,17 +33,21 @@ export function LogIn() {
       'lockIn-curr-google-token'
     );
     if (response['lockIn-curr-google-token']) {
-      console.log(response['lockIn-curr-google-token']);
+      const token = response['lockIn-curr-google-token'];
       const profile_data = await (
         await fetch(
-          `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${response['lockIn-curr-google-token']}`
+          `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${token}`
         )
       ).json();
       setUserProfile(profile_data);
       setTokenAvailability(true);
       getCalendars();
+      setUserState(profile_data, token)
+      setCalendarDataObtained(true)
+
     }
   }
+
   useEffect(() => {
     checkExistingToken();
   }, [tokenAvailability]);
