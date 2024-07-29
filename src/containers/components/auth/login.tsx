@@ -8,6 +8,9 @@ import { useTasksStore } from '../../../../stores/taskStore';
 import { DisplayCalendar } from '../google-calendar/display-calendars';
 import './login.css';
 import {useCalendarStore} from "../../../../stores/calendarStore"
+import {useUserStore} from "../../../../stores/userStore"
+import {Loading} from "../miscellaneous/loading"
+
 
 export function LogIn() {
   const [tokenAvailability, setTokenAvailability] = useState<boolean>(false);
@@ -20,6 +23,8 @@ export function LogIn() {
     {} as GoogleUserObj
   );
 
+  const {user, setUserState} = useUserStore()
+  const [calendarDataObtained, setCalendarDataObtained] = useState<boolean>(false)
   const {clearTaskState} = useTasksStore()
   const {setCalendars} = useCalendarStore()
 
@@ -28,17 +33,21 @@ export function LogIn() {
       'lockIn-curr-google-token'
     );
     if (response['lockIn-curr-google-token']) {
-      console.log(response['lockIn-curr-google-token']);
+      const token = response['lockIn-curr-google-token'];
       const profile_data = await (
         await fetch(
-          `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${response['lockIn-curr-google-token']}`
+          `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${token}`
         )
       ).json();
       setUserProfile(profile_data);
       setTokenAvailability(true);
       getCalendars();
+      setUserState(profile_data, token)
+      setCalendarDataObtained(true)
+
     }
   }
+
   useEffect(() => {
     checkExistingToken();
   }, [tokenAvailability]);
@@ -61,6 +70,7 @@ export function LogIn() {
             ).json();
             setUserProfile(profile_data);
             setTokenAvailability(true);
+            setUserState(profile_data, token)
           }
         }
       );
@@ -92,6 +102,7 @@ export function LogIn() {
     const calendars: GoogleCalendarListing[] = data['items']; 
     setCalendars(calendars.map((calendar) => ({calendarId: calendar.id, calendarName: calendar.summary}) ) as CalendarStore[])
     setCalendarListings(calendars);
+    setCalendarDataObtained(true)
   }
 
   async function logoutHandler() {
@@ -118,14 +129,15 @@ export function LogIn() {
         ) : (
           <>
             <div className="user-container">
-              <span>
+              {!userProfile.given_name && <Loading />}
+              {userProfile.given_name && <span>
                 <p className="user-name">Welcome {userProfile.given_name.charAt(0).toUpperCase()}{userProfile.given_name.slice(1)}</p>
-              </span>
+              </span>}
             </div>
           </>
         )}
       </div>
-      <DisplayCalendar CalendarList={calendarListings} />
+      {user && <DisplayCalendar CalendarList={calendarListings} calendarDataObtained={calendarDataObtained} />}
     </>
   );
 }

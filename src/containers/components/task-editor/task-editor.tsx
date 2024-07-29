@@ -7,7 +7,7 @@ import { useTasksStore } from '../../../../stores/taskStore';
 import { Task } from '../task-display/task';
 import { useCalendarStore } from '../../../../stores/calendarStore';
 import { useErrorStore } from '../../../../stores/errorStore';
-import { updateLocalTaskState} from "../../../../utils"
+import { updateLocalTaskState } from '../../../../utils';
 
 const resolver: Resolver<TaskType> = async (values) => {
   const errors: any = {};
@@ -81,7 +81,7 @@ export function TaskEditor({
   TaskData,
   state,
 }: {
-  TaskData: TaskType | null;
+  TaskData: TaskType;
   state: 'add' | 'edit';
 }) {
   const {
@@ -89,11 +89,11 @@ export function TaskEditor({
     handleSubmit,
     formState: { errors },
     setValue,
-  } = useForm<TaskType>({resolver, mode: "onBlur"});
+  } = useForm<TaskType>({ resolver, mode: 'onBlur' });
 
   const { current_edit_task_id, updateNavigation } = useNavigationStore();
-  const { updateTask, append, tasks} = useTasksStore();
-  const {setError} = useErrorStore()
+  const { updateTask, append, tasks } = useTasksStore();
+  const { setError } = useErrorStore();
   const { calendars } = useCalendarStore();
 
   const TITLE_CHAR_LIMIT = 30;
@@ -105,6 +105,7 @@ export function TaskEditor({
     useState<number>(BODY_CHAR_LIMIT);
 
   const [calendarID, setCalendarID] = useState<string>('');
+  const [calendName, setCalendarName] = useState<string>('');
 
   const onSubmit: SubmitHandler<TaskType> = async (data) => {
     const auth_obj = await chrome.storage.session.get(
@@ -137,13 +138,17 @@ export function TaskEditor({
         if (response.ok) {
           data.id = current_edit_task_id;
           updateTask(data, current_edit_task_id);
-          updateLocalTaskState(tasks)
-          updateNavigation("TaskDisplay")
-        }else{
-          setError("Server Error: Unable to apply changes")
+          updateLocalTaskState(tasks);
+          updateNavigation('TaskDisplay');
+        } else {
+          setError('Server Error: Unable to apply changes');
         }
       }
     } else {
+      if (calendarID === '') {
+        setError('Please pick a calendar');
+        return;
+      }
       const response = await fetch(
         `https://www.googleapis.com/calendar/v3/calendars/${calendarID}/events/`,
         {
@@ -169,13 +174,23 @@ export function TaskEditor({
         }
       );
 
-      if (response.ok && TaskData) {
-        const task: TaskType = await response.json();
-        TaskData.id = task.id
-        updateLocalTaskState(TaskData)
-        updateNavigation("TaskDisplay")
-      }else{
-        setError("Server Error: Failed to create task")
+      if (response.ok) {
+        const task = await response.json();
+        console.log('task created - editor ', task);
+        TaskData.id = task.id;
+        TaskData.time = data.time;
+        TaskData.calendarId = calendarID;
+        TaskData.calendarName = calendars.filter(
+          (cal) => cal.calendarId == calendarID
+        )[0].calendarName;
+        TaskData.state = 'new';
+        TaskData.title = data.title;
+        TaskData.body = data.body;
+        append(TaskData);
+        updateLocalTaskState(tasks);
+        updateNavigation('TaskDisplay');
+      } else {
+        setError('Server Error: Failed to create task');
       }
     }
   };
@@ -189,6 +204,7 @@ export function TaskEditor({
 
   function handleCalendarSelection(e: React.SyntheticEvent) {
     const target = e.currentTarget as HTMLOptionElement;
+    const textVal = target.textContent;
     setCalendarID(target.value);
   }
 
@@ -205,7 +221,11 @@ export function TaskEditor({
   return (
     <>
       {state === 'add' && (
-        <select onChange={handleCalendarSelection}>
+        <select
+          placeholder="Pick a calendar"
+          onChange={handleCalendarSelection}
+          defaultValue={calendars[0].calendarId}
+        >
           {calendars.map((calendar) => (
             <option value={calendar.calendarId}>{calendar.calendarName}</option>
           ))}
@@ -222,7 +242,10 @@ export function TaskEditor({
               type="text"
               onChange={handleTitleChange}
             />
-            <span>Character count: {titleCharacterCount}</span>
+            <span className="input-character-count">
+              Character count:{' '}
+              <span style={{ fontWeight: 'bold' }}>{titleCharacterCount}</span>
+            </span>
             {errors?.title && (
               <span className="error-message">*{errors.title.message}</span>
             )}
@@ -234,7 +257,10 @@ export function TaskEditor({
               maxLength={BODY_CHAR_LIMIT}
               onChange={handleBodyChange}
             />
-            <span>Character count: {bodyCharacterCount}</span>
+            <span className="input-character-count">
+              Character count:{' '}
+              <span style={{ fontWeight: 'bold' }}>{bodyCharacterCount}</span>
+            </span>
             {errors?.body && (
               <span className="error-message">*{errors.body.message}</span>
             )}
@@ -243,20 +269,30 @@ export function TaskEditor({
                 className="time-slot-selector"
                 {...register(`time.startTime`)}
                 type="datetime-local"
-                defaultValue={TaskData.time ? formatDateString(new Date(TaskData.time.startTime)) : ""}
+                defaultValue={
+                  TaskData.time
+                    ? formatDateString(new Date(TaskData.time.startTime))
+                    : ''
+                }
               />
-              {errors?.time?.startTime && (
-                <span className="error-message">
-                  *{errors.time?.startTime?.message}
-                </span>
-              )}
               <span className="time-slot-separator">-</span>
               <input
                 className="time-slot-selector"
                 {...register(`time.endTime`)}
                 type="datetime-local"
-                defaultValue={TaskData.time ? formatDateString(new Date(TaskData.time.endTime)) : ""}
+                defaultValue={
+                  TaskData.time
+                    ? formatDateString(new Date(TaskData.time.endTime))
+                    : ''
+                }
               />
+            </div>
+            <div className="time-error-container">
+              {errors?.time?.startTime && (
+                <span className="error-message">
+                  *{errors.time?.startTime?.message}
+                </span>
+              )}
               {errors?.time?.endTime && (
                 <span className="error-message">
                   *{errors?.time.endTime?.message}
@@ -264,13 +300,13 @@ export function TaskEditor({
               )}
             </div>
             <input
+              className="time-submit-button"
               type="submit"
               onSubmit={(e) => console.log('submitting form', e)}
             />
           </form>
         </div>
       )}
-      {!TaskData && <p>Select a task to edit</p>}
     </>
   );
 }
