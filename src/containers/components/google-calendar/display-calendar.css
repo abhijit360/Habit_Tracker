@@ -14,21 +14,6 @@
     justify-content: center;
 }
 
-.calendar-listing{
-    display: flex;
-    flex-direction:column;
-    gap: 10px;
-}
-.calendar-listing-button{
-    /* padding: 3px 5px; */
-    font-weight:700;
-    border-radius: 3px;
-    font-size: 12px;
-    border: none;
-    cursor: pointer;
-    align-self: center;
-}
-
 .calendar-selected-name{
     font-size: 12px;
     color:white;

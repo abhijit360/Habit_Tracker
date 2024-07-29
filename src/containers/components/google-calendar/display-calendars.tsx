@@ -28,7 +28,7 @@ export function DisplayCalendar({
     new Set<string>()
   );
 
-  async function handleCalendarSelect(e: React.MouseEvent) {
+  async function handleCalendarSelect(e: React.SyntheticEvent) {
     const target = e.target as HTMLInputElement;
     const calendarId = target.value;
     const currentCalendar = calendars.filter(
@@ -140,27 +140,28 @@ export function DisplayCalendar({
       )}
       {calendarDataObtained && <p>Select which calendar and tasks to import</p>}
       <div className="calendar-listing">
-        {calendarDataObtained &&
-          CalendarList.length > 0 &&
-          CalendarList.map((calendar, index) => (
-            <>
-              <button value={calendar.id} onClick={handleCalendarSelect} className='calendar-listing-button'>
+        {calendarDataObtained && CalendarList.length > 0 && (
+          <select onChange={handleCalendarSelect} className="calendar-listing">
+            {CalendarList.map((calendar) => (
+              <option key={calendar.id} value={calendar.id}>
                 {calendar.summary}
-              </button>
-            </>
-          ))}
-        {calendarDataObtained && CalendarList.length === 0 && (
-          <p>No Calendars to Import</p>
+              </option>
+            ))}
+          </select>
         )}
       </div>
-      {calendarDataObtained && (
+      {selectedCalendars.size > 0 ? (
         <>
           <p>Tasks imported from:</p>
-          <div className="calendar-selected-container">{selectedCalendarList}</div>
+          <div className="calendar-selected-container">
+            {selectedCalendarList}
+          </div>
           <button onClick={() => handleTaskStateCreation()}>
             Continue to track
           </button>
         </>
+      ): (
+        <p>No Tasks imported</p>
       )}
     </div>
   );
