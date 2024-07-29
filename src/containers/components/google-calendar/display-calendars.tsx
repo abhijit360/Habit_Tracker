@@ -28,7 +28,7 @@ export function DisplayCalendar({
     new Set<string>()
   );
 
-  async function handleCalendarSelect(e: React.ChangeEvent) {
+  async function handleCalendarSelect(e: React.MouseEvent) {
     const target = e.target as HTMLInputElement;
     const calendarId = target.value;
     const currentCalendar = calendars.filter(
@@ -70,7 +70,9 @@ export function DisplayCalendar({
       newTask.id = event.id;
       newTask.body = event.description;
       newTask.calendarId = calendarId;
-      newTask.calendarName = currentCalendar ? currentCalendar.calendarName : '';
+      newTask.calendarName = currentCalendar
+        ? currentCalendar.calendarName
+        : '';
       newTask.state = 'new';
       newTask.time = {
         startTime: new Date(event.start.dateTime),
@@ -142,16 +144,9 @@ export function DisplayCalendar({
           CalendarList.length > 0 &&
           CalendarList.map((calendar, index) => (
             <>
-              <label className="calendar-title">
-                <input
-                  key={index}
-                  type="radio"
-                  name="calendar"
-                  value={calendar.id}
-                  onChange={handleCalendarSelect}
-                />
+              <button value={calendar.id} onClick={handleCalendarSelect} className='calendar-listing-button'>
                 {calendar.summary}
-              </label>
+              </button>
             </>
           ))}
         {calendarDataObtained && CalendarList.length === 0 && (
@@ -161,7 +156,7 @@ export function DisplayCalendar({
       {calendarDataObtained && (
         <>
           <p>Tasks imported from:</p>
-          <ul className="calen">{selectedCalendarList}</ul>
+          <div className="calendar-selected-container">{selectedCalendarList}</div>
           <button onClick={() => handleTaskStateCreation()}>
             Continue to track
           </button>
