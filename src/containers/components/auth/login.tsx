@@ -50,35 +50,69 @@ export function LogIn() {
 
   useEffect(() => {
     checkExistingToken();
-  }, [tokenAvailability]);
+  }, []);
 
   async function loginHandler(e: React.MouseEvent) {
-    if (chrome.identity) {
-      chrome.identity.getAuthToken(
-        { interactive: true },
-        async function (token) {
-          if (chrome.runtime.lastError) {
-            console.error(chrome.runtime.lastError);
-          } else {
+  if (chrome.identity) {
+    chrome.identity.getAuthToken(
+      { interactive: true },
+      async function (token) {
+        if (chrome.runtime.lastError) {
+          console.error('Chrome runtime error:', chrome.runtime.lastError);
+        } else if (!token) {
+          console.error('No token received from chrome.identity.getAuthToken');
+        } else {
+          try {
             await chrome.storage.session.set({
               'lockIn-curr-google-token': token,
             });
-            const profile_data = await (
-              await fetch(
-                `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${token}`
-              )
-            ).json();
+            
+            console.log('Token received:', token);
+            
+            const response = await fetch(
+              `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${token}`
+            );
+            
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
+            
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const responseText = await response.text();
+            console.log('Raw response:', responseText);
+            
+            if (responseText === 'undefined' || responseText.trim() === '') {
+              throw new Error('Empty or invalid response received from Google API');
+            }
+            
+            let profile_data;
+            try {
+              profile_data = JSON.parse(responseText);
+            } catch (jsonError) {
+              console.error('JSON parse error:', jsonError);
+              console.error('Invalid JSON:', responseText);
+              throw new Error('Failed to parse JSON response');
+            }
+            
+            console.log('Parsed profile data:', profile_data);
+            
             setUserProfile(profile_data);
             setTokenAvailability(true);
-            setUserState(profile_data, token)
+            setUserState(profile_data, token);
+            await getCalendars();
+          } catch (error) {
+            console.error('Error in loginHandler:', error);
+            setTokenAvailability(false);
           }
         }
-      );
-    } else {
-      console.error('chrome.identity is not available.');
-    }
+      }
+    );
+  } else {
+    console.error('chrome.identity is not available.');
   }
-
+}
   async function getCalendars() {
     const tokenObj = await chrome.storage.session.get(
       'lockIn-curr-google-token'
@@ -98,11 +132,23 @@ export function LogIn() {
       await chrome.storage.session.set({ 'lockIn-curr-google-token': null });
       return;
     }
-    const data: any = await response.json();
-    const calendars: GoogleCalendarListing[] = data['items']; 
-    setCalendars(calendars.map((calendar) => ({calendarId: calendar.id, calendarName: calendar.summary}) ) as CalendarStore[])
-    setCalendarListings(calendars);
-    setCalendarDataObtained(true)
+    const responseText = await response.text();
+    console.log("responseText from getCalendarsApi", responseText)
+    if (responseText !== 'undefined' || responseText.trim() !== ''){
+      const data: any = await response.json();
+      console.log("data returned from getCalendarsApi", data)
+      const calendars: GoogleCalendarListing[] = data['items']; 
+      setCalendars(calendars.map((calendar) => ({calendarId: calendar.id, calendarName: calendar.summary}) ) as CalendarStore[])
+      setCalendarListings(calendars);
+      setCalendarDataObtained(true)
+    }else{
+      const data: any = await response.json();
+      console.log("data returned from getCalendarsApi", data)
+      const calendars: GoogleCalendarListing[] = []; 
+      setCalendars(calendars.map((calendar) => ({calendarId: calendar.id, calendarName: calendar.summary}) ) as CalendarStore[])
+      setCalendarListings(calendars);
+      setCalendarDataObtained(true)
+    }
   }
 
   async function logoutHandler() {
