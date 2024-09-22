@@ -62,7 +62,14 @@ export function DisplayCalendar({
       }
     );
 
-    const data: GoogleCalendarEventListing = await response.json();
+    let data;
+    try{
+      console.log("try to get calendar data here")
+      data = await response.json();
+    }
+    catch(e){
+      console.log("this is where the error is",e);
+    }
     const events: GoogleCalendarEvent[] = data.items;
     events.forEach((event) => {
       const newTask = {} as TaskType;
@@ -110,11 +117,14 @@ export function DisplayCalendar({
         'current_calendars_imported'
       );
       if (calendarsStorageObject) {
-        setSelectedCalendars(
-          new Set(
-            JSON.parse(calendarsStorageObject['current_calendars_imported'])
-          )
-        );
+        const calendric_data = calendarsStorageObject['current_calendars_imported']
+        if (calendric_data){
+          setSelectedCalendars(
+            new Set(
+              JSON.parse(calendric_data)
+            )
+          );
+        }
       }
     }
   }
@@ -138,10 +148,11 @@ export function DisplayCalendar({
           <Loading />
         </span>
       )}
-      {calendarDataObtained && <p>Select which calendar and tasks to import</p>}
+      {calendarDataObtained && <p>Select which calendar and tasks to import:</p>}
       <div className="calendar-listing">
         {calendarDataObtained && CalendarList.length > 0 && (
           <select onChange={handleCalendarSelect} className="calendar-listing">
+            <option value="">Select Calendar</option>
             {CalendarList.map((calendar) => (
               <option key={calendar.id} value={calendar.id}>
                 {calendar.summary}

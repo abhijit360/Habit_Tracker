@@ -50,7 +50,7 @@ export function LogIn() {
 
   useEffect(() => {
     checkExistingToken();
-  }, []);
+  }, [tokenAvailability]);
 
   async function loginHandler(e: React.MouseEvent) {
     if (chrome.identity) {
